@@ -1,0 +1,56 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import Layout from './components/Layout/Layout'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import CustomerList from './pages/customers/CustomerList'
+import CustomerDetail from './pages/customers/CustomerDetail'
+import PurchaseList from './pages/purchases/PurchaseList'
+import GoalsList from './pages/goals/GoalsList'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 30_000,
+    },
+  },
+})
+
+function AppRoutes() {
+  const { isAuthenticated } = useAuth()
+
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="*" element={<Login />} />
+      </Routes>
+    )
+  }
+
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/customers" element={<CustomerList />} />
+        <Route path="/customers/:id" element={<CustomerDetail />} />
+        <Route path="/purchases" element={<PurchaseList />} />
+        <Route path="/goals" element={<GoalsList />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  )
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
+  )
+}
