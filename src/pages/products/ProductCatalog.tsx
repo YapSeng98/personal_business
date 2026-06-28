@@ -58,17 +58,19 @@ function ProductDetail({
         onClick={e => e.stopPropagation()}
       >
         {/* Image hero */}
-        <div className={`relative h-56 bg-gradient-to-b ${cfg.gradient} flex items-center justify-center shrink-0 overflow-hidden`}>
+        <div className={`relative h-56 bg-gradient-to-b ${cfg.gradient} shrink-0 overflow-hidden`}>
           {imgSrc && !imgError ? (
             <img
               src={imgSrc}
               alt={product.name}
-              className="h-full w-full object-cover"
+              className="absolute inset-0 w-full h-full object-contain p-6 bg-white"
               onError={() => setImgError(true)}
             />
           ) : (
-            <div className={`w-20 h-20 rounded-3xl ${cfg.iconBg} flex items-center justify-center shadow-xl`}>
-              <Icon className="w-10 h-10 text-white" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className={`w-20 h-20 rounded-3xl ${cfg.iconBg} flex items-center justify-center shadow-xl`}>
+                <Icon className="w-10 h-10 text-white" />
+              </div>
             </div>
           )}
 
@@ -257,17 +259,19 @@ function ProductCard({
       onClick={onClick}
     >
       {/* Image / banner */}
-      <div className={`relative h-36 bg-gradient-to-b ${cfg.gradient} flex items-center justify-center overflow-hidden`}>
+      <div className={`relative h-40 bg-gradient-to-b ${cfg.gradient} overflow-hidden`}>
         {imgSrc && !imgError ? (
           <img
             src={imgSrc}
             alt={product.name}
-            className="h-full w-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain p-4 bg-white"
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className={`w-14 h-14 rounded-2xl ${cfg.iconBg} flex items-center justify-center shadow-md`}>
-            <Icon className="w-7 h-7 text-white" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className={`w-14 h-14 rounded-2xl ${cfg.iconBg} flex items-center justify-center shadow-md`}>
+              <Icon className="w-7 h-7 text-white" />
+            </div>
           </div>
         )}
         <span className={`absolute top-2.5 right-2.5 text-xs font-medium px-2 py-0.5 rounded-full ${cfg.pill}`}>
