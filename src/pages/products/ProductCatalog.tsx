@@ -2,8 +2,9 @@ import { useState, useMemo } from 'react'
 import {
   Search, ExternalLink, Tag, Leaf, Zap, Sparkles,
   ShowerHead, Baby, Home, Droplets, Package, Filter,
+  X, ChevronLeft, ChevronRight,
 } from 'lucide-react'
-import { products, CATEGORIES, type Category, type Product } from '../../data/products'
+import { products, CATEGORIES, productImageUrl, type Category, type Product } from '../../data/products'
 
 // ── Category config ─────────────────────────────────────────────────────────
 const categoryConfig: Record<Category, {
@@ -22,7 +23,190 @@ const categoryConfig: Record<Category, {
   'Home Care':          { icon: Droplets,   gradient: 'from-teal-100 to-teal-50',       iconBg: 'bg-teal-500',    text: 'text-teal-700',    pill: 'bg-teal-100 text-teal-700' },
 }
 
-// ── Price row ────────────────────────────────────────────────────────────────
+// ── Detail modal ─────────────────────────────────────────────────────────────
+function ProductDetail({
+  product,
+  onClose,
+  onPrev,
+  onNext,
+  hasPrev,
+  hasNext,
+}: {
+  product: Product
+  onClose: () => void
+  onPrev: () => void
+  onNext: () => void
+  hasPrev: boolean
+  hasNext: boolean
+}) {
+  const [imgError, setImgError] = useState(false)
+  const cfg = categoryConfig[product.category]
+  const Icon = cfg.icon
+  const imgSrc = productImageUrl(product.image)
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+
+      {/* Panel */}
+      <div
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Image hero */}
+        <div className={`relative h-56 bg-gradient-to-b ${cfg.gradient} flex items-center justify-center shrink-0 overflow-hidden`}>
+          {imgSrc && !imgError ? (
+            <img
+              src={imgSrc}
+              alt={product.name}
+              className="h-full w-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className={`w-20 h-20 rounded-3xl ${cfg.iconBg} flex items-center justify-center shadow-xl`}>
+              <Icon className="w-10 h-10 text-white" />
+            </div>
+          )}
+
+          {/* Badges */}
+          {product.tags.includes('Bestseller') && (
+            <span className="absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-400 text-white shadow">
+              ★ Bestseller
+            </span>
+          )}
+          {product.tags.includes('New') && (
+            <span className="absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-600 text-white shadow">
+              New
+            </span>
+          )}
+          <span className={`absolute top-3 right-12 text-xs font-medium px-2.5 py-1 rounded-full ${cfg.pill}`}>
+            {product.category}
+          </span>
+
+          {/* Close */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow transition-colors"
+          >
+            <X className="w-4 h-4 text-slate-700" />
+          </button>
+        </div>
+
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          {/* Name */}
+          <h2 className="text-xl font-bold text-slate-900 leading-snug">{product.name}</h2>
+
+          {/* Description */}
+          <p className="text-sm text-slate-600 leading-relaxed">{product.description}</p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1.5">
+            {product.tags.map(tag => (
+              <span key={tag} className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+                <Tag className="w-3 h-3" />{tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Prices */}
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pricing</p>
+            <div className="space-y-3">
+              {product.sg && (
+                <div className="rounded-2xl border border-slate-100 overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-100">
+                    <span className="text-base">🇸🇬</span>
+                    <span className="text-sm font-semibold text-slate-700">Singapore</span>
+                    <span className="text-xs text-slate-400 ml-auto">SKU: {product.sg.sku}</span>
+                  </div>
+                  <div className="px-4 py-3 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs text-slate-400 mb-0.5">ABO / APC Price</p>
+                      <p className="text-2xl font-bold text-slate-900">S${product.sg.price.abo.toLocaleString('en', { minimumFractionDigits: 2 })}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-400 mb-0.5">Retail Price</p>
+                      <p className="text-base text-slate-400 line-through">S${product.sg.price.retail.toLocaleString('en', { minimumFractionDigits: 2 })}</p>
+                      <p className="text-xs font-semibold text-emerald-600">
+                        Save S${(product.sg.price.retail - product.sg.price.abo).toLocaleString('en', { minimumFractionDigits: 2 })}
+                        {' '}({Math.round(((product.sg.price.retail - product.sg.price.abo) / product.sg.price.retail) * 100)}% off)
+                      </p>
+                    </div>
+                    <a
+                      href={product.sg.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary text-xs px-4 py-2 whitespace-nowrap flex items-center gap-1.5 shrink-0"
+                    >
+                      Buy <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {product.my && (
+                <div className="rounded-2xl border border-slate-100 overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-100">
+                    <span className="text-base">🇲🇾</span>
+                    <span className="text-sm font-semibold text-slate-700">Malaysia</span>
+                    <span className="text-xs text-slate-400 ml-auto">SKU: {product.my.sku}</span>
+                  </div>
+                  <div className="px-4 py-3 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs text-slate-400 mb-0.5">ABO / APC Price</p>
+                      <p className="text-2xl font-bold text-slate-900">RM{product.my.price.abo.toLocaleString('en', { minimumFractionDigits: 2 })}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-400 mb-0.5">Retail Price</p>
+                      <p className="text-base text-slate-400 line-through">RM{product.my.price.retail.toLocaleString('en', { minimumFractionDigits: 2 })}</p>
+                      <p className="text-xs font-semibold text-emerald-600">
+                        Save RM{(product.my.price.retail - product.my.price.abo).toLocaleString('en', { minimumFractionDigits: 2 })}
+                        {' '}({Math.round(((product.my.price.retail - product.my.price.abo) / product.my.price.retail) * 100)}% off)
+                      </p>
+                    </div>
+                    <a
+                      href={product.my.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary text-xs px-4 py-2 whitespace-nowrap flex items-center gap-1.5 shrink-0"
+                    >
+                      Buy <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Prev / Next footer */}
+        <div className="shrink-0 flex items-center justify-between px-6 py-4 border-t border-slate-100">
+          <button
+            onClick={onPrev}
+            disabled={!hasPrev}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" /> Previous
+          </button>
+          <button
+            onClick={onNext}
+            disabled={!hasNext}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            Next <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Price row ─────────────────────────────────────────────────────────────────
 function PriceRow({ flag, country, currency, abo, retail, url }: {
   flag: string; country: string; currency: string; abo: number; retail: number; url: string
 }) {
@@ -33,6 +217,7 @@ function PriceRow({ flag, country, currency, abo, retail, url }: {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={e => e.stopPropagation()}
       className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/row border border-transparent hover:border-slate-200"
     >
       <span className="text-lg leading-none">{flag}</span>
@@ -49,22 +234,33 @@ function PriceRow({ flag, country, currency, abo, retail, url }: {
   )
 }
 
-// ── Product card ─────────────────────────────────────────────────────────────
-function ProductCard({ product, market }: { product: Product; market: 'both' | 'sg' | 'my' }) {
+// ── Product card ──────────────────────────────────────────────────────────────
+function ProductCard({
+  product,
+  market,
+  onClick,
+}: {
+  product: Product
+  market: 'both' | 'sg' | 'my'
+  onClick: () => void
+}) {
   const [imgError, setImgError] = useState(false)
   const cfg = categoryConfig[product.category]
   const Icon = cfg.icon
   const showSG = (market === 'both' || market === 'sg') && !!product.sg
   const showMY = (market === 'both' || market === 'my') && !!product.my
+  const imgSrc = productImageUrl(product.image)
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden">
-
+    <div
+      className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden cursor-pointer"
+      onClick={onClick}
+    >
       {/* Image / banner */}
-      <div className={`relative h-32 bg-gradient-to-b ${cfg.gradient} flex items-center justify-center overflow-hidden`}>
-        {product.image && !imgError ? (
+      <div className={`relative h-36 bg-gradient-to-b ${cfg.gradient} flex items-center justify-center overflow-hidden`}>
+        {imgSrc && !imgError ? (
           <img
-            src={product.image}
+            src={imgSrc}
             alt={product.name}
             className="h-full w-full object-cover"
             onError={() => setImgError(true)}
@@ -74,7 +270,6 @@ function ProductCard({ product, market }: { product: Product; market: 'both' | '
             <Icon className="w-7 h-7 text-white" />
           </div>
         )}
-        {/* Category pill — top right */}
         <span className={`absolute top-2.5 right-2.5 text-xs font-medium px-2 py-0.5 rounded-full ${cfg.pill}`}>
           {product.category}
         </span>
@@ -83,31 +278,34 @@ function ProductCard({ product, market }: { product: Product; market: 'both' | '
             ★ Bestseller
           </span>
         )}
-        {product.tags.includes('New') && (
+        {product.tags.includes('New') && !product.tags.includes('Bestseller') && (
           <span className="absolute top-2.5 left-2.5 text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-600 text-white shadow-sm">
             New
           </span>
         )}
+        {/* "View details" hint on hover */}
+        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
+          <span className="bg-white/90 text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-full shadow">
+            View details
+          </span>
+        </div>
       </div>
 
       {/* Body */}
       <div className="flex flex-col flex-1 p-4 gap-3">
-        {/* Name + description */}
         <div>
           <h3 className="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-1.5">{product.name}</h3>
           <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{product.description}</p>
         </div>
 
-        {/* Tags (non-Bestseller) */}
         <div className="flex flex-wrap gap-1">
-          {product.tags.filter(t => t !== 'Bestseller' && t !== 'New').slice(0, 4).map(tag => (
+          {product.tags.filter(t => t !== 'Bestseller' && t !== 'New').slice(0, 3).map(tag => (
             <span key={tag} className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-medium">
               {tag}
             </span>
           ))}
         </div>
 
-        {/* Prices */}
         <div className="mt-auto pt-1 border-t border-slate-100 -mx-4 px-2 space-y-0.5">
           {showSG && product.sg && (
             <PriceRow
@@ -134,6 +332,7 @@ export default function ProductCatalog() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<Category | 'All'>('All')
   const [market, setMarket] = useState<'both' | 'sg' | 'my'>('both')
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     return products.filter(p => {
@@ -152,6 +351,9 @@ export default function ProductCatalog() {
       return matchCat && matchMarket && matchSearch
     })
   }, [search, category, market])
+
+  const selectedIdx = selectedId ? filtered.findIndex(p => p.id === selectedId) : -1
+  const selectedProduct = selectedIdx >= 0 ? filtered[selectedIdx] : null
 
   const totalSGProducts = products.filter(p => p.sg).length
   const totalMYProducts = products.filter(p => p.my).length
@@ -176,7 +378,6 @@ export default function ProductCatalog() {
 
       {/* Filters */}
       <div className="card p-4 space-y-3">
-        {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -188,7 +389,6 @@ export default function ProductCatalog() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          {/* Market filter */}
           <div className="flex items-center gap-1">
             <Filter className="w-3.5 h-3.5 text-slate-400" />
             <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
@@ -206,7 +406,6 @@ export default function ProductCatalog() {
             </div>
           </div>
 
-          {/* Category filter */}
           <div className="flex flex-wrap gap-1">
             <button
               onClick={() => setCategory('All')}
@@ -264,7 +463,12 @@ export default function ProductCatalog() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
           {filtered.map(p => (
-            <ProductCard key={p.id} product={p} market={market} />
+            <ProductCard
+              key={p.id}
+              product={p}
+              market={market}
+              onClick={() => setSelectedId(p.id)}
+            />
           ))}
         </div>
       )}
@@ -275,6 +479,18 @@ export default function ProductCatalog() {
           To add or update products: edit <code className="bg-brand-100 px-1 rounded">src/data/products.ts</code> and push to <code className="bg-brand-100 px-1 rounded">main</code> — the page updates automatically.
         </p>
       </div>
+
+      {/* Detail modal */}
+      {selectedProduct && (
+        <ProductDetail
+          product={selectedProduct}
+          onClose={() => setSelectedId(null)}
+          onPrev={() => setSelectedId(filtered[selectedIdx - 1].id)}
+          onNext={() => setSelectedId(filtered[selectedIdx + 1].id)}
+          hasPrev={selectedIdx > 0}
+          hasNext={selectedIdx < filtered.length - 1}
+        />
+      )}
     </div>
   )
 }
