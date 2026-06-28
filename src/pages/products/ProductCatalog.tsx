@@ -6,43 +6,46 @@ import {
 import { products, CATEGORIES, type Category, type Product } from '../../data/products'
 
 // ── Category config ─────────────────────────────────────────────────────────
-const categoryConfig: Record<Category, { icon: React.ElementType; bg: string; text: string; border: string }> = {
-  'Health & Nutrition': { icon: Leaf,      bg: 'bg-emerald-50',  text: 'text-emerald-700', border: 'border-emerald-200' },
-  'Energy':             { icon: Zap,       bg: 'bg-amber-50',    text: 'text-amber-700',   border: 'border-amber-200' },
-  'Beauty':             { icon: Sparkles,  bg: 'bg-pink-50',     text: 'text-pink-700',    border: 'border-pink-200' },
-  'Personal Care':      { icon: ShowerHead,bg: 'bg-blue-50',     text: 'text-blue-700',    border: 'border-blue-200' },
-  'Children':           { icon: Baby,      bg: 'bg-violet-50',   text: 'text-violet-700',  border: 'border-violet-200' },
-  'Home Living':        { icon: Home,      bg: 'bg-cyan-50',     text: 'text-cyan-700',    border: 'border-cyan-200' },
-  'Home Care':          { icon: Droplets,  bg: 'bg-teal-50',     text: 'text-teal-700',    border: 'border-teal-200' },
+const categoryConfig: Record<Category, {
+  icon: React.ElementType
+  gradient: string
+  iconBg: string
+  text: string
+  pill: string
+}> = {
+  'Health & Nutrition': { icon: Leaf,       gradient: 'from-emerald-100 to-emerald-50', iconBg: 'bg-emerald-500', text: 'text-emerald-700', pill: 'bg-emerald-100 text-emerald-700' },
+  'Energy':             { icon: Zap,        gradient: 'from-amber-100 to-amber-50',     iconBg: 'bg-amber-500',   text: 'text-amber-700',   pill: 'bg-amber-100 text-amber-700' },
+  'Beauty':             { icon: Sparkles,   gradient: 'from-pink-100 to-pink-50',       iconBg: 'bg-pink-500',    text: 'text-pink-700',    pill: 'bg-pink-100 text-pink-700' },
+  'Personal Care':      { icon: ShowerHead, gradient: 'from-blue-100 to-blue-50',       iconBg: 'bg-blue-500',    text: 'text-blue-700',    pill: 'bg-blue-100 text-blue-700' },
+  'Children':           { icon: Baby,       gradient: 'from-violet-100 to-violet-50',   iconBg: 'bg-violet-500',  text: 'text-violet-700',  pill: 'bg-violet-100 text-violet-700' },
+  'Home Living':        { icon: Home,       gradient: 'from-cyan-100 to-cyan-50',       iconBg: 'bg-cyan-500',    text: 'text-cyan-700',    pill: 'bg-cyan-100 text-cyan-700' },
+  'Home Care':          { icon: Droplets,   gradient: 'from-teal-100 to-teal-50',       iconBg: 'bg-teal-500',    text: 'text-teal-700',    pill: 'bg-teal-100 text-teal-700' },
 }
 
-// ── Price badge ──────────────────────────────────────────────────────────────
-function PriceBadge({ label, currency, abo, retail }: {
-  label: string; currency: string; abo: number; retail: number
+// ── Price row ────────────────────────────────────────────────────────────────
+function PriceRow({ flag, country, currency, abo, retail, url }: {
+  flag: string; country: string; currency: string; abo: number; retail: number; url: string
 }) {
+  const save = retail - abo
+  const savePct = Math.round((save / retail) * 100)
   return (
-    <div className="flex-1 rounded-xl border border-slate-100 bg-slate-50 p-3">
-      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{label}</p>
-      <div className="space-y-1">
-        <div className="flex items-baseline justify-between">
-          <span className="text-xs text-slate-500">ABO/APC</span>
-          <span className="font-bold text-slate-900 text-sm">
-            {currency} {abo.toLocaleString('en', { minimumFractionDigits: 2 })}
-          </span>
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/row border border-transparent hover:border-slate-200"
+    >
+      <span className="text-lg leading-none">{flag}</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-baseline gap-1.5 flex-wrap">
+          <span className="font-bold text-slate-900 text-base">{currency}{abo.toLocaleString('en', { minimumFractionDigits: 2 })}</span>
+          <span className="text-xs text-slate-400 line-through">{currency}{retail.toLocaleString('en', { minimumFractionDigits: 2 })}</span>
+          <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">-{savePct}%</span>
         </div>
-        <div className="flex items-baseline justify-between">
-          <span className="text-xs text-slate-400">Retail</span>
-          <span className="text-xs text-slate-500 line-through">
-            {currency} {retail.toLocaleString('en', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-        <div className="flex items-baseline justify-end">
-          <span className="text-xs font-medium text-emerald-600">
-            Save {currency} {(retail - abo).toFixed(2)}
-          </span>
-        </div>
+        <p className="text-xs text-slate-400 mt-0.5">ABO/APC · {country}</p>
       </div>
-    </div>
+      <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover/row:text-slate-500 transition-colors shrink-0" />
+    </a>
   )
 }
 
@@ -55,9 +58,10 @@ function ProductCard({ product, market }: { product: Product; market: 'both' | '
   const showMY = (market === 'both' || market === 'my') && !!product.my
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden group">
-      {/* Image / Icon area */}
-      <div className={`relative h-44 flex items-center justify-center ${cfg.bg} overflow-hidden`}>
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden">
+
+      {/* Image / banner */}
+      <div className={`relative h-32 bg-gradient-to-b ${cfg.gradient} flex items-center justify-center overflow-hidden`}>
         {product.image && !imgError ? (
           <img
             src={product.image}
@@ -66,68 +70,58 @@ function ProductCard({ product, market }: { product: Product; market: 'both' | '
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="flex flex-col items-center gap-2">
-            <div className={`w-16 h-16 rounded-2xl bg-white/60 flex items-center justify-center shadow-sm`}>
-              <Icon className={`w-8 h-8 ${cfg.text}`} />
-            </div>
+          <div className={`w-14 h-14 rounded-2xl ${cfg.iconBg} flex items-center justify-center shadow-md`}>
+            <Icon className="w-7 h-7 text-white" />
           </div>
         )}
-        {/* Category pill */}
-        <div className={`absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-white/80 backdrop-blur-sm text-xs font-medium ${cfg.text} border ${cfg.border}`}>
-          <Icon className="w-3 h-3" />
+        {/* Category pill — top right */}
+        <span className={`absolute top-2.5 right-2.5 text-xs font-medium px-2 py-0.5 rounded-full ${cfg.pill}`}>
           {product.category}
-        </div>
+        </span>
+        {product.tags.includes('Bestseller') && (
+          <span className="absolute top-2.5 left-2.5 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-400 text-white shadow-sm">
+            ★ Bestseller
+          </span>
+        )}
+        {product.tags.includes('New') && (
+          <span className="absolute top-2.5 left-2.5 text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-600 text-white shadow-sm">
+            New
+          </span>
+        )}
       </div>
 
-      {/* Content */}
+      {/* Body */}
       <div className="flex flex-col flex-1 p-4 gap-3">
+        {/* Name + description */}
         <div>
-          <h3 className="font-semibold text-slate-900 text-sm leading-snug line-clamp-2">{product.name}</h3>
-          <p className="text-xs text-slate-500 mt-1.5 line-clamp-3 leading-relaxed">{product.description}</p>
+          <h3 className="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-1.5">{product.name}</h3>
+          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{product.description}</p>
         </div>
 
-        {/* Tags */}
-        {product.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {product.tags.map(tag => (
-              <span key={tag} className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs">
-                <Tag className="w-2.5 h-2.5" />{tag}
-              </span>
-            ))}
-          </div>
-        )}
+        {/* Tags (non-Bestseller) */}
+        <div className="flex flex-wrap gap-1">
+          {product.tags.filter(t => t !== 'Bestseller' && t !== 'New').slice(0, 4).map(tag => (
+            <span key={tag} className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-medium">
+              {tag}
+            </span>
+          ))}
+        </div>
 
         {/* Prices */}
-        <div className="flex gap-2 mt-auto">
-          {showSG && (
-            <PriceBadge label="🇸🇬 SG" currency="S$" abo={product.sg!.price.abo} retail={product.sg!.price.retail} />
+        <div className="mt-auto pt-1 border-t border-slate-100 -mx-4 px-2 space-y-0.5">
+          {showSG && product.sg && (
+            <PriceRow
+              flag="🇸🇬" country="Singapore" currency="S$"
+              abo={product.sg.price.abo} retail={product.sg.price.retail}
+              url={product.sg.url}
+            />
           )}
-          {showMY && (
-            <PriceBadge label="🇲🇾 MY" currency="RM" abo={product.my!.price.abo} retail={product.my!.price.retail} />
-          )}
-        </div>
-
-        {/* Links */}
-        <div className="flex gap-2 pt-1">
-          {showSG && product.sg?.url && (
-            <a
-              href={product.sg.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium transition-colors"
-            >
-              <ExternalLink className="w-3 h-3" /> Amway SG
-            </a>
-          )}
-          {showMY && product.my?.url && (
-            <a
-              href={product.my.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium transition-colors"
-            >
-              <ExternalLink className="w-3 h-3" /> Amway MY
-            </a>
+          {showMY && product.my && (
+            <PriceRow
+              flag="🇲🇾" country="Malaysia" currency="RM"
+              abo={product.my.price.abo} retail={product.my.price.retail}
+              url={product.my.url}
+            />
           )}
         </div>
       </div>
@@ -233,7 +227,7 @@ export default function ProductCatalog() {
                   onClick={() => setCategory(cat)}
                   className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
                     category === cat
-                      ? `${cfg.bg} ${cfg.text} ${cfg.border}`
+                      ? `${cfg.pill} border-transparent`
                       : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
                   }`}
                 >
