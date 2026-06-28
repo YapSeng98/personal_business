@@ -40,7 +40,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     description:
       'A high-quality plant-based protein blend from soy, wheat, and pea sources. 900g canister provides 21g of protein per serving to support muscle health and overall wellness.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h25/h4a/13362564923422/Product_245Wx245H_NUT_511200_1.jpg',
     tags: ['Protein', 'Plant-Based', 'Nutrilite', 'Bestseller'],
     sg: {
       sku: '119843SG',
@@ -59,7 +59,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     description:
       'Complete multivitamin, multimineral, and phytonutrient supplement. Contains 12 vitamins, 10 minerals, and 20+ plant concentrates. Available as a monthly tray pack.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h8f/hbf/8798578638878/NUT_290268_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['Multivitamin', 'Minerals', 'Nutrilite', 'Bestseller'],
     sg: {
       sku: '117356SG',
@@ -78,7 +78,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     description:
       'Comprehensive B-complex formula with 8 essential B vitamins. Dual-action technology for immediate and sustained release. 120 tablets per bottle.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h82/h98/14043664089118/Product_245Wx245H_NUT_121517_1_2025.jpg',
     tags: ['Vitamin B', 'Energy', 'Nutrilite'],
     sg: {
       sku: '117667SG',
@@ -97,7 +97,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     description:
       'Premium omega-3 supplement with EPA and DHA sourced from deep-sea fish oil. Supports heart health, brain function, and joint mobility. No fishy aftertaste.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/hf4/haf/13362484412446/Product_245Wx245H_NUT_102736_1.jpg',
     tags: ['Omega-3', 'Heart Health', 'Nutrilite'],
     sg: {
       sku: '109258SG',
@@ -116,7 +116,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     description:
       'Vitamin C supplement enriched with acerola cherry concentrate — one of nature\'s richest sources of natural vitamin C. Supports immune function and antioxidant protection.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/hb6/hf6/13194212311070/Product_245Wx245H_NUT_101156_1_2024.jpg',
     tags: ['Vitamin C', 'Immune', 'Nutrilite'],
     sg: {
       sku: '100145SG',
@@ -135,7 +135,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     description:
       'Calcium, magnesium, and vitamin D3 supplement for strong bones and teeth. Derived from marine algae for superior absorption. 180 tablets per bottle.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/h29/h7e/13990588252190/Product_245Wx245H_311546%20Nutrilite%20Cal%20Mag%20D%20Plus%20-%20Twin%20Pack.png',
     tags: ['Calcium', 'Bone Health', 'Nutrilite'],
     sg: {
       sku: '104137SG',
@@ -154,7 +154,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     description:
       'Innovative gut-health protein that combines high-quality protein with prebiotics and probiotics. Supports digestive wellness while providing nutritional support.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h68/h8d/14079111856158/Product_245Wx245H_NUT_103050_1_2026.jpg',
     tags: ['Gut Health', 'Protein', 'Probiotic', 'New'],
     my: {
       sku: '201966MY',
@@ -170,7 +170,7 @@ export const products: Product[] = [
     category: 'Energy',
     description:
       'Zero sugar energy drink powered by B vitamins and natural caffeine. Delivers a clean energy boost without the crash. Available in 250ml cans, pack of 12.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/h84/hcf/8929871429662/XS_289528_1.jpg_Product_245Wx245H',
     tags: ['XS', 'Zero Sugar', 'Caffeine', 'Bestseller'],
     sg: {
       sku: '141327SG',
@@ -189,7 +189,7 @@ export const products: Product[] = [
     category: 'Energy',
     description:
       'Essential amino acid supplement to support muscle growth and recovery. Contains 9 EAAs including BCAA 2:1:1 ratio. Ideal post-workout recovery drink.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h45/h91/8801218101278/MUL_292659_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['XS', 'Amino Acid', 'Muscle', 'Sports'],
     sg: {
       sku: '122461SG',
@@ -210,7 +210,7 @@ export const products: Product[] = [
     category: 'Beauty',
     description:
       'Overnight repair mask infused with Phyto Elixir Complex. Deeply hydrates and restores skin while you sleep. Wake up to plumper, more radiant skin.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h9b/hae/8800642695198/ART_122339_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['ARTISTRY', 'Skincare', 'Hydration', 'Bestseller'],
     sg: {
       sku: '122606SG',
@@ -229,7 +229,7 @@ export const products: Product[] = [
     category: 'Beauty',
     description:
       'Advanced anti-aging serum with Retinol + Peptide Complex. Visibly reduces fine lines and wrinkles. Boosts skin firmness and elasticity. 30ml.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h66/hd8/14236396716062/Product_245Wx245H_ART_109709_1.jpg',
     tags: ['ARTISTRY', 'Anti-Aging', 'Serum', 'Retinol'],
     sg: {
       sku: '109811SG',
@@ -248,7 +248,7 @@ export const products: Product[] = [
     category: 'Beauty',
     description:
       'Luxury anti-aging cream with exclusive Cellular Longevity Complex. Targets all major signs of aging for a visibly younger-looking complexion. 50ml.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h4a/h42/12749378125854/Product_245Wx245H_ART_118184_BNPL_1.jpg',
     tags: ['ARTISTRY', 'Luxury', 'Anti-Aging', 'Premium'],
     sg: {
       sku: '117842SG',
@@ -267,7 +267,7 @@ export const products: Product[] = [
     category: 'Beauty',
     description:
       'Lightweight daily sunscreen with broad-spectrum UVA/UVB protection SPF50+. Infused with antioxidants to defend against environmental damage. Non-greasy finish.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/hd3/haf/8800577880094/ART_121547_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['ARTISTRY', 'Sunscreen', 'SPF50+', 'Daily'],
     sg: {
       sku: '120832SG',
@@ -286,7 +286,7 @@ export const products: Product[] = [
     category: 'Beauty',
     description:
       'Professional-grade skin rejuvenation device using microcurrent and LED light therapy. Clinically tested to reduce wrinkles and improve skin tone.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/h63/h58/13196855771166/Product_245Wx245H_121696_CF.jpg',
     tags: ['ARTISTRY', 'Device', 'Microcurrent', 'Premium'],
     sg: {
       sku: '122610SG',
@@ -307,7 +307,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     description:
       'Fluoride toothpaste enriched with white tea extract. Whitens teeth, strengthens enamel, freshens breath, and helps prevent cavities. 200g.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/h0d/hce/12858808369182/Product_245Wx245H_GLI_319372_1.jpg',
     tags: ['GLISTER', 'Oral Care', 'Whitening', 'Bestseller'],
     sg: {
       sku: '117827SG',
@@ -326,7 +326,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     description:
       'Luxuriously creamy body wash with shea butter and sweet almond oil. Deeply nourishes and leaves skin soft, smooth, and moisturised. 1000ml refill size.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h32/h92/8799575703582/GH_118104_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['g&h', 'Body Care', 'Moisturising'],
     sg: {
       sku: '103577SG',
@@ -345,7 +345,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     description:
       'Moisturising shampoo with Botanisil Complex and silicone-free formula. Gently cleanses while adding shine and manageability. 280ml.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h30/h78/8799502434334/SAT_110659_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['SATINIQUE', 'Hair Care', 'Moisturising'],
     sg: {
       sku: '103296SG',
@@ -364,7 +364,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     description:
       'Fast-absorbing hand and body lotion with aloe vera and vitamin E. Provides long-lasting hydration without a greasy feel.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/hca/hf2/8799265062942/AH_218199_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['ALLANO', 'Body Care', 'Aloe Vera'],
     my: {
       sku: '108124MY',
@@ -380,7 +380,7 @@ export const products: Product[] = [
     category: 'Home Living',
     description:
       'Advanced air purification system with 360° airflow and Medical-Grade HEPA-type filtration. Captures 99.99% of airborne particles. Smart sensor auto-adjusts fan speed.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/h73/hc2/8798944231454/ATM_121637_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['Air Purifier', 'HEPA', 'Smart', 'Premium'],
     sg: {
       sku: '103935SG',
@@ -399,7 +399,7 @@ export const products: Product[] = [
     category: 'Home Living',
     description:
       'Countertop water purifier with UV-C LED technology and activated carbon block filter. Eliminates 99.99% of waterborne bacteria and viruses. 5,000L annual capacity.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/ha8/h59/13181766303774/Product_245Wx245H_amway-WF_122940SG.png',
     tags: ['Water Purifier', 'UV-C', 'eSpring', 'Bestseller'],
     sg: {
       sku: '100189SG',
@@ -418,7 +418,7 @@ export const products: Product[] = [
     category: 'Home Living',
     description:
       'Compact in-car air purifier with HEPA filtration. Removes dust, allergens, and odors from your vehicle cabin. USB-powered, quiet operation.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/hc5/hc0/8798915461150/ATM_120539_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['Air Purifier', 'Car', 'HEPA', 'Compact'],
     sg: {
       sku: '122491SG',
@@ -439,7 +439,7 @@ export const products: Product[] = [
     category: 'Home Care',
     description:
       'Concentrated liquid laundry detergent with plant-based surfactants and enzyme technology. Effective in cold water, gentle on fabrics, tough on stains. 1L.',
-    image: '',
+    image: 'https://media.amway.sg/sys-master/images/h7a/hfb/8798896390174/SA8_112532_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['SA8', 'Laundry', 'Eco', 'Concentrated'],
     sg: {
       sku: '101053SG',
@@ -458,7 +458,7 @@ export const products: Product[] = [
     category: 'Home Care',
     description:
       'Ultra-concentrated dish soap that cuts through grease effectively. Biodegradable formula is gentle on hands and safe for the environment. 1L.',
-    image: '',
+    image: 'https://media.amway.my/sys-master/images/h04/hc4/8799298355230/AH_387800_1.jpg_amway-WF_Product_245Wx245H',
     tags: ['Dish Drops', 'Dishwashing', 'Biodegradable', 'Eco'],
     sg: {
       sku: '117748SG',
