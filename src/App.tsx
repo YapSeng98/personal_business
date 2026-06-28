@@ -7,6 +7,7 @@ import CustomerList from './pages/customers/CustomerList'
 import CustomerDetail from './pages/customers/CustomerDetail'
 import PurchaseList from './pages/purchases/PurchaseList'
 import GoalsList from './pages/goals/GoalsList'
+import ProductCatalog from './pages/products/ProductCatalog'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +27,7 @@ function AppRoutes() {
         <Route path="/customers/:id" element={<CustomerDetail />} />
         <Route path="/purchases" element={<PurchaseList />} />
         <Route path="/goals" element={<GoalsList />} />
+        <Route path="/products" element={<ProductCatalog />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

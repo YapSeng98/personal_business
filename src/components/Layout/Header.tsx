@@ -6,6 +6,7 @@ const titles: Record<string, string> = {
   '/customers/new': 'New Customer',
   '/purchases': 'All Purchases',
   '/goals': 'My Goals',
+  '/products': 'Product Catalog',
 }
 
 export default function Header() {
