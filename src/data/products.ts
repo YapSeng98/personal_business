@@ -459,7 +459,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     overview: 'A strengthening shampoo formulated to reduce hair fall from breakage. Enriched with biotin and caffeine to strengthen roots and nourish the scalp for visibly fuller hair.',
     description: 'Strengthening shampoo that reduces hair fall caused by breakage, nourishes the scalp, and leaves hair visibly fuller and more manageable.',
-    image: 'satinique-shampoo.jpg',
+    image: 'https://media.amway.my/sys-master/images/h67/hef/8799503810590/SAT_110659_1.jpg',
     tags: ['SATINIQUE', 'Hair Care', 'Anti-Hairfall'],
     benefits: [
       'Reduces hair fall caused by breakage with regular use',
@@ -548,7 +548,7 @@ export const products: Product[] = [
     category: 'Home Living',
     overview: 'An NSF-certified home water purifier combining carbon block filtration and UV sterilization to remove 140+ contaminants while preserving healthy minerals. Trusted in 60+ countries.',
     description: 'NSF-certified water purifier combining carbon block filter and UV technology to remove 140+ contaminants while retaining beneficial minerals.',
-    image: 'espring-water-purifier.png',
+    image: 'https://media.amway.my/sys-master/images/h97/h66/8799070945310/ESP_100188_1.jpg',
     tags: ['eSpring', 'Water Purifier', 'UV', 'Bestseller'],
     benefits: [
       'Combines carbon block filter + UV technology to remove 140+ contaminants',
