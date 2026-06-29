@@ -1,6 +1,6 @@
 // Product catalog — Amway SG & MY
 // To update: edit this file and push to main.
-// image: filename inside public/products/
+// image: CDN URL (starts with https://) or local filename inside public/products/
 
 export function productImageUrl(image: string): string {
   if (!image) return ''
@@ -29,6 +29,7 @@ export interface Product {
   id: string
   name: string
   category: Category
+  overview: string
   description: string
   image: string
   tags: string[]
@@ -49,8 +50,9 @@ export const products: Product[] = [
     id: 'nutrilite-protein',
     name: 'Nutrilite All Plant Protein Drink - 900g',
     category: 'Health & Nutrition',
+    overview: 'A plant-based protein powder that delivers 21g of complete protein per serving from soy, wheat, and pea. Ideal for anyone wanting to increase daily protein intake without meat.',
     description: 'A complete plant-based protein blend from soy, wheat, and pea sources — 21g of protein per serving to support muscle maintenance and overall wellness.',
-    image: 'nutrilite-protein.jpg',
+    image: 'https://media.amway.sg/sys-master/images/h0e/hd1/13891883630622/Product_588Wx588H_122594.png',
     tags: ['Protein', 'Plant-Based', 'Nutrilite', 'Bestseller'],
     benefits: [
       'Provides 21g high-quality protein per serving',
@@ -77,6 +79,7 @@ export const products: Product[] = [
     id: 'nutrilite-double-x',
     name: 'Nutrilite Double X Multivitamin Tray',
     category: 'Health & Nutrition',
+    overview: 'A comprehensive daily multivitamin-multimineral supplement with 12 vitamins, 10 minerals, and 22 plant concentrates in a convenient 31-day tray. Nutrilite\'s gold-standard supplement for full nutritional coverage.',
     description: 'Complete multivitamin, multimineral, and phytonutrient supplement with 12 vitamins, 10 minerals, and 22 plant concentrates — a 31-day supply tray.',
     image: 'nutrilite-double-x.jpg',
     tags: ['Multivitamin', 'Minerals', 'Nutrilite', 'Bestseller'],
@@ -105,8 +108,9 @@ export const products: Product[] = [
     id: 'nutrilite-bio-c',
     name: 'Nutrilite Bio C Plus Double Pack',
     category: 'Health & Nutrition',
+    overview: 'A sustained-release Vitamin C supplement with natural acerola cherry that delivers all-day immune support and antioxidant protection. Comes as a value double pack (120 tablets × 2).',
     description: 'Sustained-release Vitamin C enriched with acerola cherry concentrate for all-day immune support and powerful antioxidant protection.',
-    image: 'nutrilite-bio-c.jpg',
+    image: 'https://media.amway.my/sys-master/images/hf9/h2c/8798580080670/NUT_290268_1.jpg',
     tags: ['Vitamin C', 'Immune', 'Nutrilite'],
     benefits: [
       "Enriched with acerola cherry — one of nature's richest sources of natural Vitamin C",
@@ -133,8 +137,9 @@ export const products: Product[] = [
     id: 'nutrilite-cal-mag-d',
     name: 'Nutrilite Cal Mag D Plus - 180 Tablets',
     category: 'Health & Nutrition',
+    overview: 'A bone-health supplement combining calcium, magnesium, and vitamin D3 in ideal ratios. Great for adults looking to maintain bone density, especially those with low dairy intake.',
     description: 'Calcium, magnesium, and vitamin D3 in ideal ratios to support strong bones, healthy teeth, and superior mineral absorption — 60-day supply.',
-    image: 'nutrilite-cal-mag-d.png',
+    image: 'https://media.amway.sg/sys-master/images/h55/haf/13196177735710/Product_588Wx588H_110606.png',
     tags: ['Calcium', 'Bone Health', 'Nutrilite'],
     benefits: [
       'Provides calcium, magnesium and vitamin D3 in ideal ratios',
@@ -161,8 +166,9 @@ export const products: Product[] = [
     id: 'nutrilite-omega',
     name: 'Nutrilite Salmon Omega Complex - 60 Softgels',
     category: 'Health & Nutrition',
+    overview: 'An omega-3 fish oil supplement from deep-sea salmon providing EPA and DHA to support heart, brain, and joint health. Enteric-coated softgels prevent any fishy aftertaste.',
     description: 'High-quality EPA and DHA from deep-sea salmon to support cardiovascular health, brain function, and joint mobility — no fishy aftertaste.',
-    image: 'nutrilite-advanced-omega.jpg',
+    image: 'https://media.amway.my/sys-master/images/h8e/hf4/13410594127902/Product_588Wx588H_NUT_100066_1_IMG.jpg',
     tags: ['Omega-3', 'Heart Health', 'Nutrilite'],
     benefits: [
       'High-quality EPA and DHA from deep-sea salmon',
@@ -189,6 +195,7 @@ export const products: Product[] = [
     id: 'gutprotein',
     name: 'GUTPROtein',
     category: 'Health & Nutrition',
+    overview: 'A 2-in-1 drink that combines protein with prebiotics and probiotics in a single sachet. Perfect for those who want to support both muscle health and gut health simultaneously.',
     description: 'Innovative 2-in-1 formula that combines high-quality protein with prebiotics and probiotics for digestive balance and muscle support in one drink.',
     image: 'gutprotein.jpg',
     tags: ['Gut Health', 'Protein', 'Probiotic', 'New'],
@@ -214,8 +221,9 @@ export const products: Product[] = [
     id: 'xs-energy-cranberry',
     name: 'XS Energy Drink — Cranberry-Grape Blast (6 Cans)',
     category: 'Energy',
+    overview: 'A zero-sugar energy drink with B vitamins and 80mg natural caffeine for a clean, crash-free energy boost. Only 8 calories per can — great for fitness enthusiasts and busy professionals.',
     description: 'Zero-sugar energy drink powered by B vitamins and 80mg of natural caffeine — clean energy without the crash, only 8 calories per can.',
-    image: 'xs-energy-cranberry.jpg',
+    image: 'https://media.amway.sg/sys-master/images/h76/h35/8929589100574/XS_290033_1.jpg',
     tags: ['XS', 'Zero Sugar', 'Energy', 'Bestseller'],
     benefits: [
       'Zero sugar — no blood sugar spikes',
@@ -242,8 +250,9 @@ export const products: Product[] = [
     id: 'xs-muscle-multiplier',
     name: 'XS Mixed Whey Protein — Chocolate (1kg)',
     category: 'Energy',
+    overview: 'A whey protein powder with 24g protein and BCAAs per serving in rich chocolate flavor. Designed for post-workout muscle recovery and for gym-goers wanting to build and maintain lean muscle.',
     description: 'Rich chocolate-flavored whey protein blend with 24g of protein and BCAAs per serving — ideal for post-workout muscle repair and recovery.',
-    image: 'xs-muscle-multiplier.jpg',
+    image: 'https://media.amway.my/sys-master/images/hd9/h41/8798982897694/XS_292650_1.jpg',
     tags: ['XS', 'Whey Protein', 'Muscle', 'Sports'],
     benefits: [
       '24g of protein per serving from whey concentrate and isolate',
@@ -272,8 +281,9 @@ export const products: Product[] = [
     id: 'artistry-anti-wrinkle-serum',
     name: 'ARTISTRY INTENSIVE SKINCARE Anti-Wrinkle Firming Serum — 30ml',
     category: 'Beauty',
+    overview: 'A clinically proven anti-aging serum that visibly reduces wrinkles and firms skin in 4 weeks. For anyone wanting a high-performance daily serum to target signs of aging.',
     description: 'Clinically proven to reduce wrinkles in 4 weeks — this firming serum intensely hydrates, plumps, and boosts the skin\'s natural collagen production.',
-    image: 'artistry-anti-wrinkle-serum.jpg',
+    image: 'https://media.amway.sg/sys-master/images/h5c/hbe/8799366971422/ART_109709_1.jpg',
     tags: ['ARTISTRY', 'Anti-Aging', 'Serum', 'Bestseller'],
     benefits: [
       'Clinically proven to reduce appearance of wrinkles in 4 weeks',
@@ -300,8 +310,9 @@ export const products: Product[] = [
     id: 'artistry-supreme-lx',
     name: 'ARTISTRY SUPREME LX Regenerating Cream — 50ml',
     category: 'Beauty',
+    overview: 'Amway\'s most premium anti-aging moisturizer that deeply regenerates skin overnight and shows visible lifting and firming results in 2 weeks. Ideal for mature skin seeking luxury-level care.',
     description: "Amway's most luxurious anti-aging formula — significantly reduces deep wrinkles, intensely nourishes, and visibly firms skin with results in 2 weeks.",
-    image: 'artistry-supreme-lx.jpg',
+    image: 'https://media.amway.sg/sys-master/images/hf9/h01/8799844270110/ART_118184_1.jpg',
     tags: ['ARTISTRY', 'Luxury', 'Anti-Aging', 'New'],
     benefits: [
       "Amway's most luxurious anti-aging formula",
@@ -328,8 +339,9 @@ export const products: Product[] = [
     id: 'artistry-uv-protect',
     name: 'ARTISTRY IDEAL RADIANCE UV Protect SPF50+ PA++++ — 30ml',
     category: 'Beauty',
+    overview: 'A lightweight daily SPF50+ sunscreen that also brightens and evens skin tone. Perfect as the last skincare step before makeup — or as a standalone sun protection product.',
     description: 'Broad-spectrum SPF50+ PA++++ daily sunscreen that brightens skin tone and prevents dark spots — lightweight, non-greasy, and primer-ready.',
-    image: 'artistry-uv-protect.jpg',
+    image: 'https://media.amway.my/sys-master/images/hc8/h7b/8800286179358/ART_117809_1.jpg',
     tags: ['ARTISTRY', 'SPF50+', 'Sunscreen', 'Brightening'],
     benefits: [
       'Broad-spectrum SPF50+ PA++++ protection against UVA and UVB',
@@ -356,6 +368,7 @@ export const products: Product[] = [
     id: 'artistry-derma-architect',
     name: 'ARTISTRY INTENSIVE SKINCARE Advanced Skin Refinisher — 30ml',
     category: 'Beauty',
+    overview: 'A gentle AHA exfoliating treatment that resurfaces skin to reduce pores, fine lines, and uneven tone. Use 2-3× per week at night to reveal smoother, more radiant skin.',
     description: 'Gentle exfoliating treatment with AHAs that refines pores, smooths texture, and brightens dull complexion — clinically tested for all skin types.',
     image: 'artistry-derma-architect.jpg',
     tags: ['ARTISTRY', 'Exfoliating', 'Resurfacing'],
@@ -386,6 +399,7 @@ export const products: Product[] = [
     id: 'glister-toothpaste',
     name: 'GLISTER Multi-Action Fluoride Toothpaste — 200g',
     category: 'Personal Care',
+    overview: 'A multi-action daily toothpaste that whitens, fights cavities, and freshens breath in one formula. Gentle enough for everyday use by the whole family.',
     description: 'Multi-action fluoride toothpaste that fights cavities, whitens teeth, freshens breath, and strengthens enamel — gentle enough for daily use.',
     image: 'glister-toothpaste.jpg',
     tags: ['GLISTER', 'Oral Care', 'Whitening', 'Bestseller'],
@@ -414,8 +428,9 @@ export const products: Product[] = [
     id: 'gh-body-wash',
     name: 'G&H REFRESH+ Body Wash Gel — 400ml',
     category: 'Personal Care',
+    overview: 'A refreshing citrus-mint body wash that lathers richly and leaves skin clean without drying it out. pH-balanced and gentle enough for daily use on all skin types.',
     description: 'Invigorating citrus-mint body wash that cleanses without stripping moisture — pH-balanced, lathers richly, and leaves skin feeling refreshed.',
-    image: 'gh-body-wash.jpg',
+    image: 'https://media.amway.sg/sys-master/images/h78/hfa/8799223054366/GH_118110_1.jpg',
     tags: ['G&H', 'Body Wash', 'Refreshing'],
     benefits: [
       "Refreshing formula cleanses skin without stripping natural moisture",
@@ -442,6 +457,7 @@ export const products: Product[] = [
     id: 'satinique-shampoo',
     name: 'SATINIQUE Anti-Hairfall Shampoo — 280ml',
     category: 'Personal Care',
+    overview: 'A strengthening shampoo formulated to reduce hair fall from breakage. Enriched with biotin and caffeine to strengthen roots and nourish the scalp for visibly fuller hair.',
     description: 'Strengthening shampoo that reduces hair fall caused by breakage, nourishes the scalp, and leaves hair visibly fuller and more manageable.',
     image: 'satinique-shampoo.jpg',
     tags: ['SATINIQUE', 'Hair Care', 'Anti-Hairfall'],
@@ -470,8 +486,9 @@ export const products: Product[] = [
     id: 'allano-lotion',
     name: 'ALLANO Hand & Body Lotion — 400ml',
     category: 'Personal Care',
+    overview: 'An everyday hand and body moisturizer that absorbs quickly without a greasy feel. Great for keeping skin soft and hydrated throughout the day — suitable for all skin types.',
     description: 'Fast-absorbing, non-greasy moisturizer that deeply softens skin and provides long-lasting hydration — suitable for all skin types.',
-    image: 'allano-lotion.jpg',
+    image: 'https://media.amway.sg/sys-master/images/he7/hfc/8799346130974/ALL_285889_1.jpg',
     tags: ['ALLANO', 'Moisturizer', 'Daily Care'],
     benefits: [
       'Deeply moisturizes and softens skin',
@@ -500,8 +517,9 @@ export const products: Product[] = [
     id: 'atmosphere-sky',
     name: 'ATMOSPHERE SKY™ Air Treatment System',
     category: 'Home Living',
+    overview: 'A premium home air purifier that removes 99.99% of airborne particles including bacteria, viruses, and allergens — covering rooms up to 60m². Features real-time air quality monitoring.',
     description: 'Removes 99.99% of airborne particles down to 0.0024 microns — bacteria, viruses, allergens, and smoke — with real-time air quality monitoring for rooms up to 60m².',
-    image: 'atmosphere-sky.jpg',
+    image: 'https://media.amway.sg/sys-master/images/ha1/h49/8798916837406/ATM_120539_1.jpg',
     tags: ['ATMOSPHERE', 'Air Purifier', 'HEPA', 'Bestseller'],
     benefits: [
       'Removes 99.99% of airborne particles down to 0.0024 microns',
@@ -528,6 +546,7 @@ export const products: Product[] = [
     id: 'espring-water-purifier',
     name: 'eSpring™ Water Treatment System',
     category: 'Home Living',
+    overview: 'An NSF-certified home water purifier combining carbon block filtration and UV sterilization to remove 140+ contaminants while preserving healthy minerals. Trusted in 60+ countries.',
     description: 'NSF-certified water purifier combining carbon block filter and UV technology to remove 140+ contaminants while retaining beneficial minerals.',
     image: 'espring-water-purifier.png',
     tags: ['eSpring', 'Water Purifier', 'UV', 'Bestseller'],
@@ -556,8 +575,9 @@ export const products: Product[] = [
     id: 'atmosphere-drive',
     name: 'ATMOSPHERE DRIVE™ Car Air Purifier',
     category: 'Home Living',
+    overview: 'A compact HEPA air purifier designed to sit in your car cup holder and clean the air while you drive. USB-powered and whisper-quiet — great for daily commuters and families.',
     description: 'Compact HEPA car air purifier that fits in your cup holder — removes bacteria, allergens, and fine particles silently via USB while you drive.',
-    image: 'atmosphere-drive.jpg',
+    image: 'https://media.amway.sg/sys-master/images/h8f/h47/8798945738782/ATM_121637_1.jpg',
     tags: ['ATMOSPHERE', 'Car', 'Air Purifier', 'New'],
     benefits: [
       'Purifies car interior air while you drive',
@@ -586,8 +606,9 @@ export const products: Product[] = [
     id: 'sa8-laundry',
     name: 'SA8™ Premium Concentrated Laundry Detergent — 1kg',
     category: 'Home Care',
+    overview: 'A concentrated, biodegradable laundry detergent where just 1 scoop cleans a full load. Enzyme-powered formula works in all water types and is safe for all fabric types including delicates.',
     description: 'Concentrated enzyme-powered laundry detergent — just 1 scoop per full load, safe for all fabrics, effective in hard and soft water, and biodegradable.',
-    image: 'sa8-laundry.jpg',
+    image: 'https://media.amway.my/sys-master/images/h27/he5/13225000239134/Product_245Wx245H_SA8_109849_1.jpg',
     tags: ['SA8', 'Laundry', 'Concentrated', 'Eco-Friendly'],
     benefits: [
       'Concentrated formula — 1 scoop cleans a full load',
@@ -614,6 +635,7 @@ export const products: Product[] = [
     id: 'dish-drops',
     name: 'DISH DROPS™ Concentrated Dishwashing Liquid — 1L',
     category: 'Home Care',
+    overview: 'An ultra-concentrated dishwashing liquid where a few drops go a long way — cutting through grease effectively while being gentle on hands. Biodegradable and eco-friendly.',
     description: 'Ultra-concentrated, biodegradable dishwashing liquid — a few drops cuts through grease and food residue while staying gentle on hands.',
     image: 'dish-drops.jpg',
     tags: ['DISH DROPS', 'Dishwashing', 'Concentrated', 'Eco-Friendly'],

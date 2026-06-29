@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   Search, X, ChevronLeft, ChevronRight, Filter, Package,
   Leaf, Zap, Sparkles, ShowerHead, Home, Droplets,
-  CheckCircle2, Clock, ShoppingBag, Tag,
+  CheckCircle2, Clock, ShoppingBag, Tag, Info,
 } from 'lucide-react'
 import { products, CATEGORIES, productImageUrl, type Category, type Product } from '../../data/products'
 
@@ -149,9 +149,19 @@ function ProductDetail({
         <div className="flex-1 overflow-y-auto">
           <div className="p-5 space-y-6">
 
-            {/* Name + description */}
+            {/* Name */}
             <div>
-              <h2 className="text-xl font-bold text-slate-900 leading-snug mb-2">{product.name}</h2>
+              <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3">{product.name}</h2>
+
+              {/* Overview — at-a-glance summary */}
+              <div className="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-900 leading-relaxed font-medium">{product.overview}</p>
+              </div>
+            </div>
+
+            {/* Full description */}
+            <div>
               <p className="text-sm text-slate-600 leading-relaxed">{product.description}</p>
             </div>
 
@@ -399,7 +409,7 @@ function ProductCard({
       <div className="flex flex-col flex-1 p-4 gap-3">
         <div>
           <h3 className="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-1.5">{product.name}</h3>
-          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{product.description}</p>
+          <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">{product.overview}</p>
         </div>
 
         {/* Tags */}
