@@ -110,7 +110,7 @@ export const products: Product[] = [
     category: 'Health & Nutrition',
     overview: 'A sustained-release Vitamin C supplement with natural acerola cherry that delivers all-day immune support and antioxidant protection. Comes as a value double pack (120 tablets × 2).',
     description: 'Sustained-release Vitamin C enriched with acerola cherry concentrate for all-day immune support and powerful antioxidant protection.',
-    image: 'https://media.amway.my/sys-master/images/hf9/h2c/8798580080670/NUT_290268_1.jpg',
+    image: 'nutrilite-bio-c.jpg',
     tags: ['Vitamin C', 'Immune', 'Nutrilite'],
     benefits: [
       "Enriched with acerola cherry — one of nature's richest sources of natural Vitamin C",
@@ -223,7 +223,7 @@ export const products: Product[] = [
     category: 'Energy',
     overview: 'A zero-sugar energy drink with B vitamins and 80mg natural caffeine for a clean, crash-free energy boost. Only 8 calories per can — great for fitness enthusiasts and busy professionals.',
     description: 'Zero-sugar energy drink powered by B vitamins and 80mg of natural caffeine — clean energy without the crash, only 8 calories per can.',
-    image: 'https://media.amway.sg/sys-master/images/h76/h35/8929589100574/XS_290033_1.jpg',
+    image: 'xs-energy-cranberry.jpg',
     tags: ['XS', 'Zero Sugar', 'Energy', 'Bestseller'],
     benefits: [
       'Zero sugar — no blood sugar spikes',
@@ -252,7 +252,7 @@ export const products: Product[] = [
     category: 'Energy',
     overview: 'A whey protein powder with 24g protein and BCAAs per serving in rich chocolate flavor. Designed for post-workout muscle recovery and for gym-goers wanting to build and maintain lean muscle.',
     description: 'Rich chocolate-flavored whey protein blend with 24g of protein and BCAAs per serving — ideal for post-workout muscle repair and recovery.',
-    image: 'https://media.amway.my/sys-master/images/hd9/h41/8798982897694/XS_292650_1.jpg',
+    image: 'xs-muscle-multiplier.jpg',
     tags: ['XS', 'Whey Protein', 'Muscle', 'Sports'],
     benefits: [
       '24g of protein per serving from whey concentrate and isolate',
@@ -283,7 +283,7 @@ export const products: Product[] = [
     category: 'Beauty',
     overview: 'A clinically proven anti-aging serum that visibly reduces wrinkles and firms skin in 4 weeks. For anyone wanting a high-performance daily serum to target signs of aging.',
     description: 'Clinically proven to reduce wrinkles in 4 weeks — this firming serum intensely hydrates, plumps, and boosts the skin\'s natural collagen production.',
-    image: 'https://media.amway.sg/sys-master/images/h5c/hbe/8799366971422/ART_109709_1.jpg',
+    image: 'artistry-anti-wrinkle-serum.jpg',
     tags: ['ARTISTRY', 'Anti-Aging', 'Serum', 'Bestseller'],
     benefits: [
       'Clinically proven to reduce appearance of wrinkles in 4 weeks',
@@ -312,7 +312,7 @@ export const products: Product[] = [
     category: 'Beauty',
     overview: 'Amway\'s most premium anti-aging moisturizer that deeply regenerates skin overnight and shows visible lifting and firming results in 2 weeks. Ideal for mature skin seeking luxury-level care.',
     description: "Amway's most luxurious anti-aging formula — significantly reduces deep wrinkles, intensely nourishes, and visibly firms skin with results in 2 weeks.",
-    image: 'https://media.amway.sg/sys-master/images/hf9/h01/8799844270110/ART_118184_1.jpg',
+    image: 'artistry-supreme-lx.jpg',
     tags: ['ARTISTRY', 'Luxury', 'Anti-Aging', 'New'],
     benefits: [
       "Amway's most luxurious anti-aging formula",
@@ -341,7 +341,7 @@ export const products: Product[] = [
     category: 'Beauty',
     overview: 'A lightweight daily SPF50+ sunscreen that also brightens and evens skin tone. Perfect as the last skincare step before makeup — or as a standalone sun protection product.',
     description: 'Broad-spectrum SPF50+ PA++++ daily sunscreen that brightens skin tone and prevents dark spots — lightweight, non-greasy, and primer-ready.',
-    image: 'https://media.amway.my/sys-master/images/hc8/h7b/8800286179358/ART_117809_1.jpg',
+    image: 'artistry-uv-protect.jpg',
     tags: ['ARTISTRY', 'SPF50+', 'Sunscreen', 'Brightening'],
     benefits: [
       'Broad-spectrum SPF50+ PA++++ protection against UVA and UVB',
@@ -430,7 +430,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     overview: 'A refreshing citrus-mint body wash that lathers richly and leaves skin clean without drying it out. pH-balanced and gentle enough for daily use on all skin types.',
     description: 'Invigorating citrus-mint body wash that cleanses without stripping moisture — pH-balanced, lathers richly, and leaves skin feeling refreshed.',
-    image: 'https://media.amway.sg/sys-master/images/h78/hfa/8799223054366/GH_118110_1.jpg',
+    image: 'gh-body-wash.jpg',
     tags: ['G&H', 'Body Wash', 'Refreshing'],
     benefits: [
       "Refreshing formula cleanses skin without stripping natural moisture",
@@ -459,7 +459,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     overview: 'A strengthening shampoo formulated to reduce hair fall from breakage. Enriched with biotin and caffeine to strengthen roots and nourish the scalp for visibly fuller hair.',
     description: 'Strengthening shampoo that reduces hair fall caused by breakage, nourishes the scalp, and leaves hair visibly fuller and more manageable.',
-    image: 'https://media.amway.my/sys-master/images/h67/hef/8799503810590/SAT_110659_1.jpg',
+    image: 'satinique-shampoo.jpg',
     tags: ['SATINIQUE', 'Hair Care', 'Anti-Hairfall'],
     benefits: [
       'Reduces hair fall caused by breakage with regular use',
@@ -488,7 +488,7 @@ export const products: Product[] = [
     category: 'Personal Care',
     overview: 'An everyday hand and body moisturizer that absorbs quickly without a greasy feel. Great for keeping skin soft and hydrated throughout the day — suitable for all skin types.',
     description: 'Fast-absorbing, non-greasy moisturizer that deeply softens skin and provides long-lasting hydration — suitable for all skin types.',
-    image: 'https://media.amway.sg/sys-master/images/he7/hfc/8799346130974/ALL_285889_1.jpg',
+    image: 'allano-lotion.jpg',
     tags: ['ALLANO', 'Moisturizer', 'Daily Care'],
     benefits: [
       'Deeply moisturizes and softens skin',
@@ -519,7 +519,7 @@ export const products: Product[] = [
     category: 'Home Living',
     overview: 'A premium home air purifier that removes 99.99% of airborne particles including bacteria, viruses, and allergens — covering rooms up to 60m². Features real-time air quality monitoring.',
     description: 'Removes 99.99% of airborne particles down to 0.0024 microns — bacteria, viruses, allergens, and smoke — with real-time air quality monitoring for rooms up to 60m².',
-    image: 'https://media.amway.sg/sys-master/images/ha1/h49/8798916837406/ATM_120539_1.jpg',
+    image: 'atmosphere-sky.jpg',
     tags: ['ATMOSPHERE', 'Air Purifier', 'HEPA', 'Bestseller'],
     benefits: [
       'Removes 99.99% of airborne particles down to 0.0024 microns',
@@ -548,7 +548,7 @@ export const products: Product[] = [
     category: 'Home Living',
     overview: 'An NSF-certified home water purifier combining carbon block filtration and UV sterilization to remove 140+ contaminants while preserving healthy minerals. Trusted in 60+ countries.',
     description: 'NSF-certified water purifier combining carbon block filter and UV technology to remove 140+ contaminants while retaining beneficial minerals.',
-    image: 'https://media.amway.my/sys-master/images/h97/h66/8799070945310/ESP_100188_1.jpg',
+    image: 'espring-water-purifier.png',
     tags: ['eSpring', 'Water Purifier', 'UV', 'Bestseller'],
     benefits: [
       'Combines carbon block filter + UV technology to remove 140+ contaminants',
@@ -577,7 +577,7 @@ export const products: Product[] = [
     category: 'Home Living',
     overview: 'A compact HEPA air purifier designed to sit in your car cup holder and clean the air while you drive. USB-powered and whisper-quiet — great for daily commuters and families.',
     description: 'Compact HEPA car air purifier that fits in your cup holder — removes bacteria, allergens, and fine particles silently via USB while you drive.',
-    image: 'https://media.amway.sg/sys-master/images/h8f/h47/8798945738782/ATM_121637_1.jpg',
+    image: 'atmosphere-drive.jpg',
     tags: ['ATMOSPHERE', 'Car', 'Air Purifier', 'New'],
     benefits: [
       'Purifies car interior air while you drive',
