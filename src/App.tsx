@@ -23,9 +23,11 @@ const queryClient = new QueryClient({
   },
 })
 
+const AUTH_GATE_ENABLED = false // TEMPORARY: set back to true to re-enable the login requirement
+
 function RequireAuth({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (AUTH_GATE_ENABLED && !isAuthenticated) return <Navigate to="/login" replace />
   return <>{children}</>
 }
 
