@@ -1,10 +1,13 @@
 import axios from 'axios'
-import type { Customer, CustomerPurchase, BusinessGoal, SNCredentials } from '../types'
+import type { Customer, CustomerPurchase, BusinessGoal, SNCredentials, Activity, Partner, PartnerActivity } from '../types'
 
 const TABLES = {
   CUSTOMER: 'u_customer_master',
   PURCHASE: 'u_customer_purchase',
   GOAL: 'u_business_goal',
+  ACTIVITY: 'u_activity',
+  PARTNER: 'u_partner',
+  PARTNER_ACTIVITY: 'u_partner_activity',
 }
 
 function getAuthHeader(creds: SNCredentials) {
@@ -12,8 +15,9 @@ function getAuthHeader(creds: SNCredentials) {
 }
 
 function createClient(creds: SNCredentials) {
+  const baseURL = import.meta.env.DEV ? '/snow-api' : `https://${creds.instance}`
   return axios.create({
-    baseURL: '/snow-api',
+    baseURL,
     headers: {
       Authorization: getAuthHeader(creds),
       'Content-Type': 'application/json',
@@ -125,6 +129,130 @@ export async function updateGoal(creds: SNCredentials, sysId: string, data: Part
 export async function deleteGoal(creds: SNCredentials, sysId: string): Promise<void> {
   const client = createClient(creds)
   await client.delete(`/api/now/table/${TABLES.GOAL}/${sysId}`)
+}
+
+// Activities
+export async function getActivities(creds: SNCredentials): Promise<Activity[]> {
+  const client = createClient(creds)
+  const res = await client.get(`/api/now/table/${TABLES.ACTIVITY}`, {
+    params: {
+      sysparm_fields: 'sys_id,u_title,u_description,u_category,u_tags,u_activity_date,u_activity_time,u_address,u_lat,u_lng,u_geocode_status,u_status,u_source,sys_created_on,sys_updated_on',
+      sysparm_order_by: 'u_activity_date',
+      sysparm_limit: 1000,
+    },
+  })
+  return res.data.result
+}
+
+export async function getActivity(creds: SNCredentials, sysId: string): Promise<Activity> {
+  const client = createClient(creds)
+  const res = await client.get(`/api/now/table/${TABLES.ACTIVITY}/${sysId}`)
+  return res.data.result
+}
+
+export async function createActivity(creds: SNCredentials, data: Partial<Activity>): Promise<Activity> {
+  const client = createClient(creds)
+  const res = await client.post(`/api/now/table/${TABLES.ACTIVITY}`, data)
+  return res.data.result
+}
+
+export async function updateActivity(creds: SNCredentials, sysId: string, data: Partial<Activity>): Promise<Activity> {
+  const client = createClient(creds)
+  const res = await client.patch(`/api/now/table/${TABLES.ACTIVITY}/${sysId}`, data)
+  return res.data.result
+}
+
+export async function deleteActivity(creds: SNCredentials, sysId: string): Promise<void> {
+  const client = createClient(creds)
+  await client.delete(`/api/now/table/${TABLES.ACTIVITY}/${sysId}`)
+}
+
+// Partners
+function normalizeRef(value: unknown): string {
+  return typeof value === 'object' && value !== null ? (value as { value: string }).value : (value as string) ?? ''
+}
+
+export async function getPartners(creds: SNCredentials): Promise<Partner[]> {
+  const client = createClient(creds)
+  const res = await client.get(`/api/now/table/${TABLES.PARTNER}`, {
+    params: {
+      sysparm_fields: 'sys_id,u_name,u_email,u_phone,u_status,u_network_position,u_rank,u_sponsor,u_sponsor.u_name,u_partner_of,u_partner_of.u_name,u_interest_tags,u_notes,sys_created_on,sys_updated_on',
+      sysparm_order_by: 'u_name',
+      sysparm_limit: 1000,
+    },
+  })
+  return res.data.result.map((r: Record<string, unknown>) => ({
+    ...r,
+    u_sponsor: normalizeRef(r.u_sponsor),
+    u_sponsor_display: typeof r['u_sponsor.u_name'] === 'string' ? r['u_sponsor.u_name'] : '',
+    u_partner_of: normalizeRef(r.u_partner_of),
+    u_partner_of_display: typeof r['u_partner_of.u_name'] === 'string' ? r['u_partner_of.u_name'] : '',
+  }))
+}
+
+export async function getPartner(creds: SNCredentials, sysId: string): Promise<Partner> {
+  const client = createClient(creds)
+  const res = await client.get(`/api/now/table/${TABLES.PARTNER}/${sysId}`)
+  return res.data.result
+}
+
+export async function createPartner(creds: SNCredentials, data: Partial<Partner>): Promise<Partner> {
+  const client = createClient(creds)
+  const res = await client.post(`/api/now/table/${TABLES.PARTNER}`, data)
+  return res.data.result
+}
+
+export async function updatePartner(creds: SNCredentials, sysId: string, data: Partial<Partner>): Promise<Partner> {
+  const client = createClient(creds)
+  const res = await client.patch(`/api/now/table/${TABLES.PARTNER}/${sysId}`, data)
+  return res.data.result
+}
+
+export async function deletePartner(creds: SNCredentials, sysId: string): Promise<void> {
+  const client = createClient(creds)
+  await client.delete(`/api/now/table/${TABLES.PARTNER}/${sysId}`)
+}
+
+// Partner ↔ Activity links
+export async function getPartnerActivities(
+  creds: SNCredentials,
+  filter?: { partnerId?: string; activityId?: string }
+): Promise<PartnerActivity[]> {
+  const client = createClient(creds)
+  const params: Record<string, string | number> = {
+    sysparm_fields: 'sys_id,u_partner,u_partner.u_name,u_activity,u_activity.u_title,u_interested,u_confirmed,u_role_in_activity,sys_created_on',
+    sysparm_limit: 1000,
+  }
+  const queryParts: string[] = []
+  if (filter?.partnerId) queryParts.push(`u_partner=${filter.partnerId}`)
+  if (filter?.activityId) queryParts.push(`u_activity=${filter.activityId}`)
+  if (queryParts.length) params.sysparm_query = queryParts.join('^')
+
+  const res = await client.get(`/api/now/table/${TABLES.PARTNER_ACTIVITY}`, { params })
+  return res.data.result.map((r: Record<string, unknown>) => ({
+    ...r,
+    u_partner: normalizeRef(r.u_partner),
+    u_partner_display: typeof r['u_partner.u_name'] === 'string' ? r['u_partner.u_name'] : '',
+    u_activity: normalizeRef(r.u_activity),
+    u_activity_display: typeof r['u_activity.u_title'] === 'string' ? r['u_activity.u_title'] : '',
+  }))
+}
+
+export async function createPartnerActivity(creds: SNCredentials, data: Partial<PartnerActivity>): Promise<PartnerActivity> {
+  const client = createClient(creds)
+  const res = await client.post(`/api/now/table/${TABLES.PARTNER_ACTIVITY}`, data)
+  return res.data.result
+}
+
+export async function updatePartnerActivity(creds: SNCredentials, sysId: string, data: Partial<PartnerActivity>): Promise<PartnerActivity> {
+  const client = createClient(creds)
+  const res = await client.patch(`/api/now/table/${TABLES.PARTNER_ACTIVITY}/${sysId}`, data)
+  return res.data.result
+}
+
+export async function deletePartnerActivity(creds: SNCredentials, sysId: string): Promise<void> {
+  const client = createClient(creds)
+  await client.delete(`/api/now/table/${TABLES.PARTNER_ACTIVITY}/${sysId}`)
 }
 
 export async function testConnection(creds: SNCredentials): Promise<boolean> {

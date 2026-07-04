@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, ShoppingCart, Target, LogOut, Briefcase, Package } from 'lucide-react'
+import { LayoutDashboard, Users, ShoppingCart, Target, LogOut, Briefcase, Package, Calendar, Network } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 const nav = [
@@ -8,6 +8,8 @@ const nav = [
   { to: '/purchases', icon: ShoppingCart, label: 'Purchases' },
   { to: '/goals', icon: Target, label: 'My Goals' },
   { to: '/products', icon: Package, label: 'Products' },
+  { to: '/activities', icon: Calendar, label: 'Activities' },
+  { to: '/partners', icon: Network, label: 'Partners' },
 ]
 
 export default function Sidebar() {
