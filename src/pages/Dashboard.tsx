@@ -34,14 +34,14 @@ function StatCard({
     violet: 'bg-violet-50 text-violet-600',
   }
   return (
-    <div className="card flex items-center gap-4">
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${colors[color]}`}>
-        <Icon className="w-6 h-6" />
+    <div className="card flex items-center gap-2.5 sm:gap-4 px-4 py-3.5 sm:p-6">
+      <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${colors[color]}`}>
+        <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
       </div>
-      <div>
-        <p className="text-2xl font-bold text-slate-900">{value}</p>
-        <p className="text-sm text-slate-500">{label}</p>
-        {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
+      <div className="min-w-0">
+        <p className="text-lg sm:text-2xl font-bold text-slate-900 tabular-nums truncate">{value}</p>
+        <p className="text-xs sm:text-sm text-slate-500 leading-tight">{label}</p>
+        {sub && <p className="text-xs text-slate-400 mt-0.5 truncate hidden sm:block">{sub}</p>}
       </div>
     </div>
   )
@@ -103,21 +103,21 @@ export default function Dashboard() {
     })
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-5 sm:space-y-6 w-full">
       {/* Welcome */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
           Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'} 👋
         </h2>
         <p className="text-slate-500 text-sm mt-0.5">Here's your business overview for today.</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard label="Total Customers" value={customers.length} icon={Users} color="brand" />
         <StatCard
           label="Total Revenue"
-          value={`RM ${totalRevenue.toLocaleString('en-MY', { minimumFractionDigits: 0 })}`}
+          value={`RM ${totalRevenue.toLocaleString('en-MY', { notation: 'compact', maximumFractionDigits: 1 })}`}
           icon={DollarSign}
           color="emerald"
           sub="from completed orders"
@@ -126,7 +126,7 @@ export default function Dashboard() {
         <StatCard label="Active Goals" value={activeGoals.length} icon={Target} color="violet" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Revenue chart */}
         <div className="card lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
@@ -134,11 +134,12 @@ export default function Dashboard() {
             <TrendingUp className="w-4 h-4 text-slate-300" />
           </div>
           {chartData.length === 0 ? (
-            <div className="h-40 flex items-center justify-center text-sm text-slate-400">
+            <div className="h-[200px] sm:h-[260px] xl:h-[300px] flex items-center justify-center text-sm text-slate-400">
               No completed orders yet
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={200}>
+            <div className="h-[200px] sm:h-[260px] xl:h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
@@ -156,6 +157,7 @@ export default function Dashboard() {
                 <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} fill="url(#rev)" />
               </AreaChart>
             </ResponsiveContainer>
+            </div>
           )}
         </div>
 
