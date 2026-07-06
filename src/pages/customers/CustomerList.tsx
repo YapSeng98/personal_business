@@ -111,6 +111,7 @@ export default function CustomerList() {
         </div>
       ) : (
         <div className="card p-0 overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100">
@@ -157,7 +158,7 @@ export default function CustomerList() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => openEdit(c)}
                         className="p-1.5 rounded-lg hover:bg-brand-50 text-slate-400 hover:text-brand-600 transition-colors"
@@ -185,6 +186,7 @@ export default function CustomerList() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

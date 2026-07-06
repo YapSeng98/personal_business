@@ -214,6 +214,7 @@ export default function Dashboard() {
         {recentPurchases.length === 0 ? (
           <div className="px-6 py-10 text-center text-sm text-slate-400">No orders yet.</div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <tbody className="divide-y divide-slate-50">
               {recentPurchases.map(p => (
@@ -234,6 +235,7 @@ export default function Dashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

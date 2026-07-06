@@ -3,12 +3,13 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowLeft, Plus, Trash2, Building2, Phone, Mail, MapPin,
-  FileText, ShoppingCart, DollarSign, Loader2,
+  FileText, ShoppingCart, DollarSign, Loader2, Network, CheckCircle2,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import {
   getCustomer, updateCustomer, deleteCustomer,
   getPurchases, createPurchase, updatePurchase, deletePurchase,
+  getPartners, createPartner,
 } from '../../services/servicenow'
 import type { CustomerPurchase } from '../../types'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
@@ -40,6 +41,31 @@ export default function CustomerDetail() {
     queryKey: ['purchases', id],
     queryFn: () => getPurchases(credentials!, id),
     enabled: !!credentials && !!id,
+  })
+
+  const { data: partners = [] } = useQuery({
+    queryKey: ['partners'],
+    queryFn: () => getPartners(credentials!),
+    enabled: !!credentials,
+  })
+
+  // Partner record already linked to this customer (if converted before)
+  const linkedPartner = partners.find(p => p.u_customer === id)
+
+  const convertMut = useMutation({
+    mutationFn: () => createPartner(credentials!, {
+      u_name: customer!.u_name,
+      u_email: customer!.u_email,
+      u_phone: customer!.u_phone,
+      u_notes: customer!.u_notes,
+      u_status: 'prospect',
+      u_network_position: 'prospect',
+      u_customer: id,
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['partners'] })
+      navigate('/partners')
+    },
   })
 
   const deleteCustMut = useMutation({
@@ -100,7 +126,25 @@ export default function CustomerDetail() {
               )}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            {linkedPartner ? (
+              <Link to="/partners" className="btn-secondary text-emerald-700 border-emerald-200 bg-emerald-50 hover:bg-emerald-100">
+                <CheckCircle2 className="w-4 h-4" /> Partner ✓
+              </Link>
+            ) : (
+              <button
+                onClick={() => {
+                  if (confirm(`Convert ${customer.u_name} into a partner? Their contact details will be copied to a new partner record linked to this customer.`)) {
+                    convertMut.mutate()
+                  }
+                }}
+                className="btn-primary"
+                disabled={convertMut.isPending}
+              >
+                {convertMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Network className="w-4 h-4" />}
+                Convert to Partner
+              </button>
+            )}
             <button
               onClick={() => {
                 if (confirm('Delete this customer?')) deleteCustMut.mutate()
@@ -161,7 +205,7 @@ export default function CustomerDetail() {
 
       {/* Purchases */}
       <div className="card p-0 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 flex-wrap gap-2">
           <h3 className="font-semibold text-slate-900 flex items-center gap-2">
             <ShoppingCart className="w-4 h-4 text-slate-400" /> Purchase History
           </h3>
@@ -178,11 +222,12 @@ export default function CustomerDetail() {
             <p className="text-sm text-slate-400">No purchase records yet.</p>
           </div>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-50">
                 <th className="text-left px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Product / Service</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Date</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden sm:table-cell">Date</th>
                 <th className="text-right px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Amount</th>
                 <th className="px-6 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</th>
                 <th className="px-6 py-3"></th>
@@ -195,7 +240,7 @@ export default function CustomerDetail() {
                     <p className="font-medium text-slate-900">{p.u_product_name}</p>
                     {p.u_notes && <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{p.u_notes}</p>}
                   </td>
-                  <td className="px-6 py-3.5 text-slate-600">
+                  <td className="px-6 py-3.5 text-slate-600 hidden sm:table-cell">
                     {p.u_purchase_date ? new Date(p.u_purchase_date).toLocaleDateString('en-MY') : '—'}
                   </td>
                   <td className="px-6 py-3.5 text-right font-semibold text-slate-900">
@@ -205,7 +250,7 @@ export default function CustomerDetail() {
                     <Badge label={p.u_status} variant={statusVariant[p.u_status] ?? 'slate'} />
                   </td>
                   <td className="px-6 py-3.5">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => { setEditPurchase(p); setPurchaseModal(true) }}
                         className="p-1.5 rounded-lg hover:bg-brand-50 text-slate-400 hover:text-brand-600 transition-colors"
@@ -224,6 +269,7 @@ export default function CustomerDetail() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

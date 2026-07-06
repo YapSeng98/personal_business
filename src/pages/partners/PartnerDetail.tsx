@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   X, ChevronLeft, ChevronRight, Mail, Phone, Users, Tag,
   StickyNote, Calendar as CalendarIcon, CheckCircle2, Clock, Edit2, Trash2,
+  UserCheck, ExternalLink,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { getPartnerActivities, updatePartnerActivity } from '../../services/servicenow'
@@ -150,6 +152,24 @@ export default function PartnerDetail({
                 )}
               </div>
             </div>
+
+            {/* Linked customer record (converted from customer) */}
+            {partner.u_customer && (
+              <div className="flex gap-3 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3">
+                <UserCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                <div className="text-sm text-emerald-900 leading-relaxed flex-1 min-w-0">
+                  <p className="font-semibold">Converted from customer</p>
+                  <Link
+                    to={`/customers/${partner.u_customer}`}
+                    className="inline-flex items-center gap-1 text-emerald-700 hover:underline mt-0.5"
+                    onClick={onClose}
+                  >
+                    {partner.u_customer_display || 'View customer record'}
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Interest tags */}
             {tags.length > 0 && (

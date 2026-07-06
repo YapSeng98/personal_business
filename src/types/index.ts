@@ -99,6 +99,8 @@ export interface Partner {
   u_sponsor_display: string
   u_partner_of: string
   u_partner_of_display: string
+  u_customer: string
+  u_customer_display: string
   u_interest_tags: string
   u_notes: string
   sys_created_on: string

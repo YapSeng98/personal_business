@@ -126,6 +126,7 @@ export default function PurchaseList() {
         </div>
       ) : (
         <div className="card p-0 overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100">
@@ -157,7 +158,7 @@ export default function PurchaseList() {
                     <Badge label={p.u_status} variant={statusVariant[p.u_status] ?? 'slate'} />
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => { setEditPurchase(p); setModalOpen(true) }}
                         className="p-1.5 rounded-lg hover:bg-brand-50 text-slate-400 hover:text-brand-600 transition-colors"
@@ -176,7 +177,8 @@ export default function PurchaseList() {
               ))}
             </tbody>
           </table>
-          <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+          </div>
+          <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex justify-between items-center flex-wrap gap-2">
             <span className="text-xs text-slate-400">{filtered.length} records</span>
             <span className="text-xs font-medium text-slate-600">
               Showing revenue: <span className="text-emerald-600">RM {totalRevenue.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span>
