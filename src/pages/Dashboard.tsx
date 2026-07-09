@@ -143,18 +143,20 @@ export default function Dashboard() {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#818cf8" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#818cf8" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => `RM${(v / 1000).toFixed(0)}k`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#757a95' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#757a95' }} axisLine={false} tickLine={false} tickFormatter={v => `RM${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
+                  cursor={{ stroke: 'rgba(129,140,248,0.4)' }}
                   formatter={(v: number) => [`RM ${v.toLocaleString('en-MY', { minimumFractionDigits: 2 })}`, 'Revenue']}
-                  contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12 }}
+                  contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.12)', background: '#171a26', color: '#e7e9f3', fontSize: 12, boxShadow: '0 10px 30px -12px rgba(0,0,0,0.8)' }}
+                  labelStyle={{ color: '#a6abc2' }}
                 />
-                <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} fill="url(#rev)" />
+                <Area type="monotone" dataKey="revenue" stroke="#818cf8" strokeWidth={2} fill="url(#rev)" />
               </AreaChart>
             </ResponsiveContainer>
             </div>
