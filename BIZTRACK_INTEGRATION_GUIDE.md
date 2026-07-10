@@ -59,16 +59,18 @@ This holds password hashing, token sessions, token validation, and the generic t
 - **API ID:** `biztrack`  (gives base path `/api/x_887486_biztrack/biztrack`)
 
 Then add **5 resources** (New on the API). For **every** resource set
-**Requires authentication = false** and leave **Requires ACL** empty. Paste the matching
-block from `servicenow/REST_BizTrackAPI_resources.js`:
+**Requires authentication = false** and leave **Requires ACL** empty. Each resource's
+script is its **own file** in `servicenow/rest-api/`:
 
-| # | HTTP method | Relative path | Purpose |
+| # | HTTP method | Relative path | Paste this file |
 |---|---|---|---|
-| 1 | POST | `/auth/{action}` | login / register / logout |
-| 2 | GET | `/data/{table}` | list records |
-| 3 | GET | `/data/{table}/{id}` | one record |
-| 4 | POST | `/data/{table}` | create |
-| 5 | POST | `/data/{table}/{id}` | update / delete (via `X-HTTP-Method`) |
+| 1 | POST | `/auth/{action}` | `rest-api/Resource_1_auth.js` |
+| 2 | GET | `/data/{table}` | `rest-api/Resource_2_data_list.js` |
+| 3 | GET | `/data/{table}/{id}` | `rest-api/Resource_3_data_get.js` |
+| 4 | POST | `/data/{table}` | `rest-api/Resource_4_data_create.js` |
+| 5 | POST | `/data/{table}/{id}` | `rest-api/Resource_5_data_mutate.js` |
+
+**Full click-by-click steps are in [`servicenow/README.md`](servicenow/README.md).**
 
 > Why "Requires authentication = false": the browser has no ServiceNow login — our own
 > token (checked inside each resource) is the guard. Server-side `GlideRecord` runs regardless
