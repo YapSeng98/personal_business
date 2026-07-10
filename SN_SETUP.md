@@ -5,17 +5,37 @@ Field names, choice values, and reference targets below are taken **directly fro
 
 ---
 
-## 0. Before you create anything — 3 rules
+## Current status (updated)
 
-1. **Global scope only.** Create every table in the **Global** application scope so it is named exactly `u_activity`, `u_partner`, etc. A scoped app would rename them `x_yourscope_activity` and the app would not find them.
-2. **Choice values are case-sensitive and exact.** The app stores the raw value (e.g. `cross_line`, `not_interested`, `bulk_upload`). If your choice value differs by even a capital letter, that record breaks.
-3. **Create tables in the order below.** Reference fields can only point at tables that already exist, and two tables reference themselves.
+- **The 6 tables already exist** in the scoped application **`x_887486_biztrack`**, named exactly `u_customer_master`, `u_customer_purchase`, `u_business_goal`, `u_partner`, `u_activity`, `u_partner_activity`.
+- Because the table **Names** are `u_*`, the app matches them as-is — **no code change needed for table names**, even though they live in a scope. The Table API addresses tables by Name, not by scope.
+- The app's **login screen is enabled** — it collects your ServiceNow username + password, which every data request uses. Without signing in, all pages stay empty by design.
+
+So the remaining work is **integration access + CORS + a sign-in user**, below. The field/choice spec further down is now a **verification reference**, not a build list.
 
 ---
 
-## 1. Instance-level setup (one time)
+## 0. Rules that still matter
 
-### 1a. CORS rule (REQUIRED — the app calls SN from the browser)
+1. **Choice values are case-sensitive and exact.** The app stores the raw value (e.g. `cross_line`, `not_interested`, `bulk_upload`). If a choice value differs by even a capital letter, that record breaks.
+2. **Column names must be `u_*`** to match the code (`u_name`, `u_status`, …). Your table *names* are already `u_*`; confirm the *columns* are too (open a table → Table Columns).
+
+---
+
+## 1. Integration setup (do these to make it work)
+
+### 1a. ⭐ Table Application Access — the scoped-app step (all 6 tables)
+Because the tables live in the `x_887486_biztrack` scope, an outside REST call is **blocked by default** — you get `403` even with a correct login. Fix per table.
+
+*ServiceNow Studio → open each Table → "Application Access" section:*
+- ✅ **Can read**, **Can create**, **Can update**, **Can delete**
+- ✅ **Allow access to this table via web services**
+- **Accessible from** → **All application scopes** (not "This application scope only")
+
+Apply to all six: `u_customer_master`, `u_customer_purchase`, `u_business_goal`, `u_partner`, `u_activity`, `u_partner_activity`.
+**This is the #1 reason a scoped-app REST integration returns empty / 403.**
+
+### 1b. CORS rule (REQUIRED — the app calls SN from the browser)
 *System Web Services → REST → CORS Rules → New*
 - **Name**: BizTrack GitHub Pages
 - **REST API**: Table API `now/table` (`/api/now/table`)
@@ -24,14 +44,16 @@ Field names, choice values, and reference targets below are taken **directly fro
 
 Without this, the browser blocks every request and all pages stay empty even with correct tables.
 
-### 1b. API user / role
-The username + password you sign in with must have **read + write + create + delete** on all six tables below. On a personal dev instance the `admin` role covers this. If you use a dedicated integration user, grant it those ACLs.
+### 1c. Sign-in user (Basic auth)
+The app authenticates with a ServiceNow **username + password** on every request, so:
+- Use a **local** user that has a password (not SSO-only). On dev, your `admin` account works.
+- The user must satisfy the tables' ACLs. The scoped app auto-generated ~48 Access Controls + 2 roles. Simplest: sign in as **admin** (passes all ACLs). Otherwise grant the user the app's 2 roles and confirm those ACLs allow read/create/update/delete.
 
 ---
 
-## 2. Existing tables (should already exist — verify fields)
+## 2. Field reference — Customers / Purchases / Goals
 
-These three power Customers / Purchases / Goals and were built earlier. Confirm they exist with these fields; **the only genuinely new change here is the `u_customer` field is NOT on these — it is added to `u_partner` in §3.**
+You've already built these. Use the tables below to **verify** the columns match; the app reads/writes exactly these `u_*` names.
 
 ### `u_customer_master` — Customers
 | Field | Type |
@@ -67,11 +89,13 @@ These three power Customers / Purchases / Goals and were built earlier. Confirm 
 
 ---
 
-## 3. NEW tables to create (in this order)
+## 3. Field reference — Partners / Activities / Junction
 
-### STEP 1 — Create `u_partner` (Partners / team network)
+Also already built. Verify columns and choice values against these. (If you ever rebuild from scratch, create them in this order — `u_partner` → `u_activity` → `u_partner_activity` — because of the reference dependencies.)
 
-Create the table first with the plain fields, **then** add the three Reference fields (they need `u_partner` and `u_customer_master` to already exist — self-references are added after the table is created).
+### `u_partner` (Partners / team network)
+
+Plain fields plus three Reference fields (`u_sponsor`/`u_partner_of` point at `u_partner` itself; `u_customer` points at `u_customer_master`).
 
 | Field | Type | Choice values / reference target |
 |---|---|---|
@@ -87,7 +111,7 @@ Create the table first with the plain fields, **then** add the three Reference f
 | u_partner_of | **Reference → u_partner** (itself) | lateral link (e.g. spouse) |
 | u_customer | **Reference → u_customer_master** | set when a customer is converted |
 
-### STEP 2 — Create `u_activity` (Events)
+### `u_activity` (Events)
 
 | Field | Type | Choice values |
 |---|---|---|
@@ -106,9 +130,7 @@ Create the table first with the plain fields, **then** add the three Reference f
 
 > Note: `u_category` here uses **Proper Case** values (`Meeting`) — the one exception to the lowercase rule, because the Excel importer matches against them directly.
 
-### STEP 3 — Create `u_partner_activity` (junction: invitations & RSVP)
-
-Create last — both reference fields need `u_partner` and `u_activity` to exist.
+### `u_partner_activity` (junction: invitations & RSVP)
 
 | Field | Type | Choice values / reference target |
 |---|---|---|
@@ -133,23 +155,37 @@ The app "dot-walks" to show display names. These already exist, nothing extra to
 
 ## 5. Verify it works (in the live app)
 
-1. **Add a Partner** → refresh → it persists ⇒ `u_partner` + CORS + auth all good.
+0. **Open the live app and sign in** — the login screen collects your ServiceNow username + password (instance `dev405150.service-now.com` is pre-filled). If sign-in fails, it's CORS (§1b) or the user/password (§1c).
+1. **Add a Partner** → refresh → it persists ⇒ `u_partner` + Application Access + CORS + auth all good.
 2. **Convert a Customer to Partner** (Customer detail page) → new partner appears with a "Converted from customer" link ⇒ `u_customer` reference works.
 3. **Add an Activity with an address** → map renders after a moment ⇒ `u_activity` + geocoding good.
 4. **Invite a partner to the activity and confirm them** ⇒ `u_partner_activity` good.
 
+**If pages are empty / you get errors:** open the browser console. A **CORS** error → §1b. A **403 / Forbidden** → §1a Application Access (the scoped-app step). A **401** → §1c sign-in user.
+
 ---
+
+## What's left for you (checklist)
+
+| Item | Where | Status |
+|---|---|---|
+| 6 tables named `u_*` in scope `x_887486_biztrack` | ServiceNow | ✅ done |
+| App login enabled (collects credentials) | code | ✅ done |
+| Table **Application Access** — all scopes + web services, ×6 | §1a | ⬜ **most important** |
+| CORS rule for `https://yapseng98.github.io` | §1b | ⬜ |
+| Sign-in user with password + admin/role | §1c | ⬜ |
+| Confirm columns are `u_*` | §0 | ⬜ quick check |
 
 ## Quick reference — all six tables
 
-| Table | Purpose | New? |
-|---|---|---|
-| u_customer_master | Customers (buyers) | existing |
-| u_customer_purchase | Orders | existing |
-| u_business_goal | Goals | existing |
-| **u_partner** | Team network | **new** |
-| **u_activity** | Events | **new** |
-| **u_partner_activity** | Invite/RSVP junction | **new** |
+| Table | Purpose |
+|---|---|
+| u_customer_master | Customers (buyers) |
+| u_customer_purchase | Orders |
+| u_business_goal | Goals |
+| u_partner | Team network |
+| u_activity | Events |
+| u_partner_activity | Invite/RSVP junction |
 
 **Reference fields (6):**
 `u_customer_purchase.u_customer→u_customer_master` ·
