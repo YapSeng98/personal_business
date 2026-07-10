@@ -106,23 +106,23 @@ export default function ActivityDetail({
         <div className={`shrink-0 bg-gradient-to-br ${cfg.gradient} border-b ${cfg.border}`}>
           <div className="flex items-center justify-between px-5 pt-4 pb-2">
             <div className="flex items-center gap-2">
-              <button onClick={onPrev} disabled={!hasPrev} className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm">
-                <ChevronLeft className="w-4 h-4 text-slate-700" />
+              <button onClick={onPrev} disabled={!hasPrev} className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 ring-1 ring-white/15 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                <ChevronLeft className="w-4 h-4 text-white/85" />
               </button>
               <span className="text-xs font-medium text-slate-500 tabular-nums">{index + 1} / {total}</span>
-              <button onClick={onNext} disabled={!hasNext} className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm">
-                <ChevronRight className="w-4 h-4 text-slate-700" />
+              <button onClick={onNext} disabled={!hasNext} className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 ring-1 ring-white/15 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                <ChevronRight className="w-4 h-4 text-white/85" />
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={onEdit} aria-label="Edit" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white transition-all shadow-sm">
-                <Edit2 className="w-3.5 h-3.5 text-slate-700" />
+              <button onClick={onEdit} aria-label="Edit" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 ring-1 ring-white/15 transition-all">
+                <Edit2 className="w-3.5 h-3.5 text-white/85" />
               </button>
-              <button onClick={onDelete} aria-label="Delete" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-red-50 transition-all shadow-sm">
-                <Trash2 className="w-3.5 h-3.5 text-red-500" />
+              <button onClick={onDelete} aria-label="Delete" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-red-500/25 ring-1 ring-white/15 transition-all">
+                <Trash2 className="w-3.5 h-3.5 text-red-400" />
               </button>
-              <button onClick={onClose} aria-label="Close" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white transition-all shadow-sm">
-                <X className="w-4 h-4 text-slate-700" />
+              <button onClick={onClose} aria-label="Close" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 ring-1 ring-white/15 transition-all">
+                <X className="w-4 h-4 text-white/85" />
               </button>
             </div>
           </div>

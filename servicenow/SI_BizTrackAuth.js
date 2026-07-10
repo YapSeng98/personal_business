@@ -3,23 +3,25 @@
 // Location : Studio → Create File → Server Development → Script Include
 // Name     : BizTrackAuth
 // Client callable : NO
-// Accessible from : All application scopes
 //
 // Powers the BizTrack API: app-account auth (register/login/logout,
-// token sessions) + a token-guarded generic data proxy for the 6
-// BizTrack tables. Mirrors the proven PFMT pattern (SHA-256 + GUID
-// tokens + a session table).
+// token sessions) + a token-guarded generic data proxy for the BizTrack
+// tables. Mirrors the proven PFMT pattern (SHA-256 + GUID tokens).
+//
+// NOTE: tables created inside this scoped app are physically named
+// x_887486_biztrack_<label>. The frontend uses short names (u_partner…);
+// real() adds the scope prefix before every GlideRecord call.
 // ============================================================
 
 var BizTrackAuth = Class.create();
 BizTrackAuth.prototype = {
 
   // ---- config -------------------------------------------------------------
+  SCOPE: 'x_887486_biztrack_',   // real table = SCOPE + short name
   TABLE_USER: 'u_app_user',
   TABLE_SESSION: 'u_app_session',
   SESSION_DAYS: 7,
-  // Only these tables may be reached through /data. Reference display
-  // columns are used for dot-walk (u_partner/u_customer = u_name, u_activity = u_title).
+  // Short table names the frontend may reach through /data.
   ALLOWED: {
     u_customer_master: true,
     u_customer_purchase: true,
@@ -31,6 +33,8 @@ BizTrackAuth.prototype = {
 
   initialize: function () {},
 
+  real: function (shortName) { return this.SCOPE + shortName; },
+
   // ---- HTTP helpers -------------------------------------------------------
   setCors: function (response) {
     response.setHeader('Access-Control-Allow-Origin', '*');
@@ -38,8 +42,6 @@ BizTrackAuth.prototype = {
     response.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-BizTrack-Token, X-HTTP-Method');
   },
   ok: function (response, payload) {
-    // ServiceNow wraps setBody() once in { "result": ... }, so the
-    // frontend reads response.data.result — matching the Table API shape.
     response.setStatus(200);
     response.setBody(payload);
   },
@@ -52,12 +54,8 @@ BizTrackAuth.prototype = {
   hashPassword: function (plaintext, salt) {
     return new GlideDigest().getSHA256Hex(String(salt) + String(plaintext));
   },
-  newSalt: function () {
-    return gs.generateGUID().replace(/-/g, '');
-  },
-  newToken: function () {
-    return gs.generateGUID().replace(/-/g, '');
-  },
+  newSalt: function () { return gs.generateGUID().replace(/-/g, ''); },
+  newToken: function () { return gs.generateGUID().replace(/-/g, ''); },
 
   // ---- sessions -----------------------------------------------------------
   createSession: function (userSysId, deviceHint) {
@@ -65,7 +63,7 @@ BizTrackAuth.prototype = {
     var expires = new GlideDateTime();
     expires.addDaysUTC(this.SESSION_DAYS);
 
-    var gr = new GlideRecord(this.TABLE_SESSION);
+    var gr = new GlideRecord(this.real(this.TABLE_SESSION));
     gr.initialize();
     gr.setValue('u_user', userSysId);
     gr.setValue('u_token', token);
@@ -74,24 +72,23 @@ BizTrackAuth.prototype = {
     gr.insert();
     return token;
   },
-  // Returns the u_app_user GlideRecord for a valid token, else null.
   userForToken: function (token) {
     if (!token) return null;
-    var s = new GlideRecord(this.TABLE_SESSION);
+    var s = new GlideRecord(this.real(this.TABLE_SESSION));
     s.addQuery('u_token', token);
     s.addQuery('u_expires_at', '>', new GlideDateTime());
     s.setLimit(1);
     s.query();
     if (!s.next()) return null;
 
-    var u = new GlideRecord(this.TABLE_USER);
+    var u = new GlideRecord(this.real(this.TABLE_USER));
     if (!u.get(s.getValue('u_user'))) return null;
     if (u.getValue('u_active') === 'false') return null;
     return u;
   },
   logout: function (token) {
     if (!token) return;
-    var s = new GlideRecord(this.TABLE_SESSION);
+    var s = new GlideRecord(this.real(this.TABLE_SESSION));
     s.addQuery('u_token', token);
     s.query();
     if (s.next()) { s.setValue('u_expires_at', new GlideDateTime()); s.update(); }
@@ -113,14 +110,14 @@ BizTrackAuth.prototype = {
     if (!username || !password) return { error: 'Username and password are required.' };
     if (password.length < 6) return { error: 'Password must be at least 6 characters.' };
 
-    var dupe = new GlideRecord(this.TABLE_USER);
+    var dupe = new GlideRecord(this.real(this.TABLE_USER));
     dupe.addQuery('u_username', username);
     dupe.setLimit(1);
     dupe.query();
     if (dupe.next()) return { error: 'That username is already taken.' };
 
     var salt = this.newSalt();
-    var u = new GlideRecord(this.TABLE_USER);
+    var u = new GlideRecord(this.real(this.TABLE_USER));
     u.initialize();
     u.setValue('u_username', username);
     u.setValue('u_salt', salt);
@@ -140,7 +137,7 @@ BizTrackAuth.prototype = {
     var password = body.password || '';
     if (!username || !password) return { error: 'Username and password are required.' };
 
-    var u = new GlideRecord(this.TABLE_USER);
+    var u = new GlideRecord(this.real(this.TABLE_USER));
     u.addQuery('u_username', username);
     u.setLimit(1);
     u.query();
@@ -158,14 +155,9 @@ BizTrackAuth.prototype = {
   // ---- generic data proxy -------------------------------------------------
   assertTable: function (table) { return this.ALLOWED[table] === true; },
 
-  // Build one plain object for a record, resolving requested fields.
-  // A dotted field (e.g. u_sponsor.u_name) is returned under that exact
-  // key using the referenced record's display value — matching how the
-  // frontend already reads dot-walk fields.
   serialize: function (gr, fieldList) {
     var out = { sys_id: gr.getUniqueValue() };
     if (!fieldList || !fieldList.length) {
-      // no explicit fields -> return every column's value
       var els = gr.getElements();
       for (var i = 0; i < els.size(); i++) {
         var name = els.get(i).getName();
@@ -177,8 +169,7 @@ BizTrackAuth.prototype = {
       var field = fieldList[f];
       if (!field) continue;
       if (field.indexOf('.') > -1) {
-        var base = field.split('.')[0];
-        out[field] = gr.getDisplayValue(base) || '';
+        out[field] = gr.getDisplayValue(field.split('.')[0]) || '';
       } else {
         out[field] = gr.getValue(field);
       }
@@ -190,7 +181,7 @@ BizTrackAuth.prototype = {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
     var fields = (params.fields || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 
-    var gr = new GlideRecord(table);
+    var gr = new GlideRecord(this.real(table));
     if (params.query) gr.addEncodedQuery(params.query);
     if (params.order_by) {
       if (String(params.order_desc) === 'true') gr.orderByDesc(params.order_by);
@@ -207,7 +198,7 @@ BizTrackAuth.prototype = {
 
   getOne: function (table, sysId, fields) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
-    var gr = new GlideRecord(table);
+    var gr = new GlideRecord(this.real(table));
     if (!gr.get(sysId)) return { error: 'Record not found.' };
     var list = (fields || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
     return this.serialize(gr, list);
@@ -215,7 +206,7 @@ BizTrackAuth.prototype = {
 
   create: function (table, body) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
-    var gr = new GlideRecord(table);
+    var gr = new GlideRecord(this.real(table));
     gr.initialize();
     this._applyBody(gr, body);
     var id = gr.insert();
@@ -225,7 +216,7 @@ BizTrackAuth.prototype = {
 
   update: function (table, sysId, body) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
-    var gr = new GlideRecord(table);
+    var gr = new GlideRecord(this.real(table));
     if (!gr.get(sysId)) return { error: 'Record not found.' };
     this._applyBody(gr, body);
     gr.update();
@@ -234,7 +225,7 @@ BizTrackAuth.prototype = {
 
   remove: function (table, sysId) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
-    var gr = new GlideRecord(table);
+    var gr = new GlideRecord(this.real(table));
     if (!gr.get(sysId)) return { error: 'Record not found.' };
     gr.deleteRecord();
     return { deleted: true };
@@ -243,7 +234,7 @@ BizTrackAuth.prototype = {
   _applyBody: function (gr, body) {
     for (var key in body) {
       if (!body.hasOwnProperty(key)) continue;
-      if (key === 'sys_id' || key.indexOf('.') > -1) continue; // never write sys_id or dot-walk keys
+      if (key === 'sys_id' || key.indexOf('.') > -1) continue;
       gr.setValue(key, body[key]);
     }
   },
