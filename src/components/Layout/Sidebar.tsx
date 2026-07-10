@@ -13,7 +13,7 @@ const nav = [
 ]
 
 export default function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { logout, credentials, user } = useAuth()
+  const { logout, credentials, user, isDemo } = useAuth()
 
   return (
     <>
@@ -71,7 +71,11 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
         <div className="px-3 py-4 border-t border-slate-100">
           <div className="px-3 py-2 mb-1">
             <p className="text-xs font-medium text-slate-500 truncate">{user?.display_name || user?.username}</p>
-            <p className="text-xs text-slate-400 truncate">{credentials?.instance}</p>
+            {isDemo ? (
+              <span className="inline-block mt-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-brand-500/15 text-brand-300 ring-1 ring-brand-400/25">DEMO MODE</span>
+            ) : (
+              <p className="text-xs text-slate-400 truncate">{credentials?.instance}</p>
+            )}
           </div>
           <button
             onClick={logout}

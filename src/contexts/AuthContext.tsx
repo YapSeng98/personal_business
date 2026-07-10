@@ -6,8 +6,10 @@ interface AuthContextType {
   credentials: SNCredentials | null
   user: AppUser | null
   isAuthenticated: boolean
+  isDemo: boolean
   login: (instance: string, username: string, password: string) => Promise<void>
   register: (instance: string, data: { username: string; password: string; display_name: string; email: string }) => Promise<void>
+  loginDemo: () => void
   logout: () => void
 }
 
@@ -42,8 +44,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession({ instance: inst, token, user })
   }
 
+  function loginDemo() {
+    setSession({
+      instance: 'demo',
+      token: 'demo',
+      user: { sys_id: 'demo', username: 'demo', display_name: 'Demo User', email: 'demo@biztrack.app' },
+    })
+  }
+
   function logout() {
-    if (session) authLogout(session.instance, session.token)
+    if (session && session.token !== 'demo') authLogout(session.instance, session.token)
     setSession(null)
   }
 
@@ -53,8 +63,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credentials: session ? { instance: session.instance, token: session.token } : null,
         user: session?.user ?? null,
         isAuthenticated: !!session,
+        isDemo: session?.token === 'demo',
         login,
         register,
+        loginDemo,
         logout,
       }}
     >

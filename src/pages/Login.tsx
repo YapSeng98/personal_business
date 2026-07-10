@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Briefcase } from 'lucide-react'
+import { Briefcase, Sparkles } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 const DEFAULT_INSTANCE = 'dev405150.service-now.com'
@@ -19,7 +19,7 @@ const styles = `
 `
 
 export default function Login() {
-  const { login, register } = useAuth()
+  const { login, register, loginDemo } = useAuth()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [instance, setInstance] = useState(DEFAULT_INSTANCE)
   const [username, setUsername] = useState('')
@@ -129,6 +129,21 @@ export default function Login() {
               ? <>No account? <span className="text-brand-300 font-semibold">Create one</span></>
               : <>Already have an account? <span className="text-brand-300 font-semibold">Sign in</span></>}
           </button>
+
+          {/* Demo — no backend needed */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-[10px] uppercase tracking-widest text-white/25">or</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+          <button
+            type="button"
+            onClick={loginDemo}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-white/80 text-sm font-medium transition-colors"
+          >
+            <Sparkles className="w-4 h-4 text-brand-300" /> Explore the demo
+          </button>
+          <p className="text-[11px] text-white/25 text-center">Sample data · no ServiceNow needed</p>
         </div>
 
         <p className="text-[11px] text-white/20 mt-6 text-center">

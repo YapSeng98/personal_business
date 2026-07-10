@@ -1,5 +1,8 @@
 import axios from 'axios'
 import type { Customer, CustomerPurchase, BusinessGoal, SNCredentials, Activity, Partner, PartnerActivity, AppUser } from '../types'
+import { demoAdapter } from './demoBackend'
+
+export const DEMO_TOKEN = 'demo'
 
 const TABLES = {
   CUSTOMER: 'u_customer_master',
@@ -58,6 +61,10 @@ export async function authLogout(instance: string, token: string): Promise<void>
 // service function below and transparently rewrites it to the BizTrack
 // /data proxy, mapping params and tunnelling the verb through POST.
 function createClient(creds: SNCredentials) {
+  // Demo mode: serve everything from the in-memory demo backend.
+  if (creds.token === DEMO_TOKEN) {
+    return axios.create({ adapter: demoAdapter })
+  }
   const client = axios.create({
     baseURL: apiBase(creds.instance),
     headers: { 'Content-Type': 'application/json', 'X-BizTrack-Token': creds.token },
