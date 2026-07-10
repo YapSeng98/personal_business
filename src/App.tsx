@@ -23,7 +23,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const AUTH_GATE_ENABLED = false // TEMPORARY: set back to true to re-enable the login requirement
+const AUTH_GATE_ENABLED = true // login required so the app can collect ServiceNow credentials
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
