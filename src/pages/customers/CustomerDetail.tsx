@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowLeft, Plus, Trash2, Building2, Phone, Mail, MapPin,
-  FileText, ShoppingCart, DollarSign, Loader2, Network, CheckCircle2,
+  FileText, ShoppingCart, DollarSign, Loader2, Network, CheckCircle2, Pencil,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import {
@@ -11,11 +11,12 @@ import {
   getPurchases, createPurchase, updatePurchase, deletePurchase,
   getPartners, createPartner,
 } from '../../services/servicenow'
-import type { CustomerPurchase } from '../../types'
+import type { Customer, CustomerPurchase } from '../../types'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import Modal from '../../components/ui/Modal'
 import Badge from '../../components/ui/Badge'
 import PurchaseForm from './PurchaseForm'
+import CustomerForm from './CustomerForm'
 
 const statusVariant: Record<string, 'green' | 'yellow' | 'red'> = {
   completed: 'green',
@@ -30,6 +31,7 @@ export default function CustomerDetail() {
   const navigate = useNavigate()
   const [purchaseModal, setPurchaseModal] = useState(false)
   const [editPurchase, setEditPurchase] = useState<CustomerPurchase | null>(null)
+  const [customerModal, setCustomerModal] = useState(false)
 
   const { data: customer, isLoading: loadingCustomer } = useQuery({
     queryKey: ['customer', id],
@@ -71,6 +73,15 @@ export default function CustomerDetail() {
   const deleteCustMut = useMutation({
     mutationFn: () => deleteCustomer(credentials!, id!),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['customers'] }); navigate('/customers') },
+  })
+
+  const updateCustMut = useMutation({
+    mutationFn: (data: Partial<Customer>) => updateCustomer(credentials!, id!, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['customer', id] })
+      qc.invalidateQueries({ queryKey: ['customers'] })
+      setCustomerModal(false)
+    },
   })
 
   const createPurchaseMut = useMutation({
@@ -127,6 +138,9 @@ export default function CustomerDetail() {
             </div>
           </div>
           <div className="flex gap-2 flex-wrap">
+            <button className="btn-secondary" onClick={() => setCustomerModal(true)}>
+              <Pencil className="w-4 h-4" /> Edit
+            </button>
             {linkedPartner ? (
               <Link to="/partners" className="btn-secondary text-emerald-700 border-emerald-200 bg-emerald-50 hover:bg-emerald-100">
                 <CheckCircle2 className="w-4 h-4" /> Partner ✓
@@ -290,6 +304,16 @@ export default function CustomerDetail() {
           }}
           onCancel={() => { setPurchaseModal(false); setEditPurchase(null) }}
           loading={createPurchaseMut.isPending || updatePurchaseMut.isPending}
+        />
+      </Modal>
+
+      {/* Edit Customer Modal */}
+      <Modal open={customerModal} onClose={() => setCustomerModal(false)} title="Edit Customer">
+        <CustomerForm
+          initial={customer}
+          onSubmit={data => updateCustMut.mutate(data)}
+          onCancel={() => setCustomerModal(false)}
+          loading={updateCustMut.isPending}
         />
       </Modal>
     </div>

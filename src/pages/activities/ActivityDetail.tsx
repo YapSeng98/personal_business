@@ -115,13 +115,13 @@ export default function ActivityDetail({
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={onEdit} className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white transition-all shadow-sm">
+              <button onClick={onEdit} aria-label="Edit" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white transition-all shadow-sm">
                 <Edit2 className="w-3.5 h-3.5 text-slate-700" />
               </button>
-              <button onClick={onDelete} className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-red-50 transition-all shadow-sm">
+              <button onClick={onDelete} aria-label="Delete" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-red-50 transition-all shadow-sm">
                 <Trash2 className="w-3.5 h-3.5 text-red-500" />
               </button>
-              <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white transition-all shadow-sm">
+              <button onClick={onClose} aria-label="Close" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 hover:bg-white transition-all shadow-sm">
                 <X className="w-4 h-4 text-slate-700" />
               </button>
             </div>
