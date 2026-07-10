@@ -21,7 +21,6 @@ const styles = `
 export default function Login() {
   const { login, register, loginDemo } = useAuth()
   const [mode, setMode] = useState<'login' | 'register'>('login')
-  const [instance, setInstance] = useState(DEFAULT_INSTANCE)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
@@ -37,10 +36,10 @@ export default function Login() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    if (!username || !password || !instance) return
+    if (!username || !password) return
     setError(''); setLoading(true)
     try {
-      await login(instance, username, password)
+      await login(DEFAULT_INSTANCE, username, password)
     } catch (err) {
       setError((err as Error).message || 'Login failed.')
       setLoading(false)
@@ -49,12 +48,12 @@ export default function Login() {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
-    if (!username || !password || !instance) return
+    if (!username || !password) return
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return }
     if (password !== confirm) { setError('Passwords do not match.'); return }
     setError(''); setLoading(true)
     try {
-      await register(instance, { username, password, display_name: displayName || username, email })
+      await register(DEFAULT_INSTANCE, { username, password, display_name: displayName || username, email })
     } catch (err) {
       setError((err as Error).message || 'Could not create account.')
       setLoading(false)
@@ -85,18 +84,7 @@ export default function Login() {
           {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
         </p>
 
-        {/* Instance */}
         <div className="w-full space-y-2.5">
-          <input
-            className="input-field"
-            type="text"
-            placeholder="instance.service-now.com"
-            autoCapitalize="off"
-            spellCheck={false}
-            value={instance}
-            onChange={e => setInstance(e.target.value)}
-          />
-
           {mode === 'login' ? (
             <form onSubmit={handleLogin} className="space-y-2.5">
               <input className="input-field" type="text" placeholder="Username" autoComplete="username" autoCapitalize="off" value={username} onChange={e => setUsername(e.target.value)} autoFocus />
