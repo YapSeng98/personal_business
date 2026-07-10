@@ -60,6 +60,24 @@ Every create / read / update / delete for those tables goes **browser → BizTra
 | u_expires_at | Date/Time | |
 | u_device_hint | String | 255 |
 
+### STEP 1b · ⭐ Make every `u_` table reachable from the scoped app
+Your tables are named `u_*` → they live in **Global scope**, but the Script Include/API run in
+the `x_887486_biztrack` scope. A scoped script can't read a global table unless the table allows
+cross-scope access, or you get `GlideRecord … invalid table name`.
+
+For **each** of the 8 tables (`u_app_user`, `u_app_session`, `u_customer_master`,
+`u_customer_purchase`, `u_business_goal`, `u_partner`, `u_activity`, `u_partner_activity`):
+
+1. Filter navigator → type `sys_db_object.list` → Enter.
+2. Open the table (Name = e.g. `u_app_user`).
+3. In the **Application Access** section set:
+   - **Accessible from** → **All application scopes**
+   - tick **Can create**, **Can read**, **Can update**, **Can delete**
+   - tick **Allow access to this table via web services**
+4. **Update.**
+
+This is the #1 gotcha when the tables are global `u_` and the app is scoped.
+
 ---
 
 ## STEP 2 · Create the Script Include
