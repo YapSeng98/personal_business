@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Customer, CustomerPurchase, BusinessGoal, SNCredentials, Activity, Partner, PartnerActivity } from '../types'
+import type { Customer, CustomerPurchase, BusinessGoal, SNCredentials, Activity, Partner, PartnerActivity, AppUser } from '../types'
 
 const TABLES = {
   CUSTOMER: 'u_customer_master',
@@ -10,20 +10,93 @@ const TABLES = {
   PARTNER_ACTIVITY: 'u_partner_activity',
 }
 
-function getAuthHeader(creds: SNCredentials) {
-  return 'Basic ' + btoa(`${creds.username}:${creds.password}`)
+// ── BizTrack Scripted REST API ────────────────────────────────────────────
+// Base: https://<instance>/api/x_887486_biztrack/biztrack
+// In dev, Vite proxies /snow-api → the instance (see vite.config.ts).
+function apiBase(instance: string): string {
+  return import.meta.env.DEV ? '/snow-api/api/x_887486_biztrack/biztrack' : `https://${instance}/api/x_887486_biztrack/biztrack`
 }
 
+function apiError(e: unknown): string {
+  const err = e as { response?: { data?: { result?: { error?: string }; error?: string } }; message?: string }
+  return err?.response?.data?.result?.error || err?.response?.data?.error || err?.message || 'Request failed'
+}
+
+// Auth calls need no token. Every request is HTTP GET or POST; the real
+// verb rides in X-HTTP-Method so PATCH/DELETE tunnel through POST (avoids
+// SN's body restrictions on those verbs and keeps CORS simple).
+export async function authLogin(instance: string, username: string, password: string): Promise<{ token: string; user: AppUser }> {
+  try {
+    const res = await axios.post(`${apiBase(instance)}/auth/login`, { username, password }, {
+      headers: { 'Content-Type': 'application/json', 'X-HTTP-Method': 'POST' },
+    })
+    return res.data?.result ?? res.data
+  } catch (e) { throw new Error(apiError(e)) }
+}
+
+export async function authRegister(
+  instance: string,
+  data: { username: string; password: string; display_name: string; email: string }
+): Promise<{ token: string; user: AppUser }> {
+  try {
+    const res = await axios.post(`${apiBase(instance)}/auth/register`, data, {
+      headers: { 'Content-Type': 'application/json', 'X-HTTP-Method': 'POST' },
+    })
+    return res.data?.result ?? res.data
+  } catch (e) { throw new Error(apiError(e)) }
+}
+
+export async function authLogout(instance: string, token: string): Promise<void> {
+  try {
+    await axios.post(`${apiBase(instance)}/auth/logout`, {}, {
+      headers: { 'Content-Type': 'application/json', 'X-HTTP-Method': 'POST', 'X-BizTrack-Token': token },
+    })
+  } catch { /* best effort */ }
+}
+
+// Data client. Keeps the existing Table-API call shape used by every
+// service function below and transparently rewrites it to the BizTrack
+// /data proxy, mapping params and tunnelling the verb through POST.
 function createClient(creds: SNCredentials) {
-  const baseURL = import.meta.env.DEV ? '/snow-api' : `https://${creds.instance}`
-  return axios.create({
-    baseURL,
-    headers: {
-      Authorization: getAuthHeader(creds),
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
+  const client = axios.create({
+    baseURL: apiBase(creds.instance),
+    headers: { 'Content-Type': 'application/json', 'X-BizTrack-Token': creds.token },
   })
+  client.interceptors.request.use(cfg => {
+    const m = (cfg.url || '').match(/^\/api\/now\/table\/([^/]+)(?:\/(.+))?$/)
+    if (m) {
+      const table = m[1]
+      const id = m[2]
+      const method = (cfg.method || 'get').toUpperCase()
+      if (cfg.params) {
+        const p: Record<string, unknown> = {}
+        const src = cfg.params as Record<string, unknown>
+        if (src.sysparm_fields) p.fields = src.sysparm_fields
+        if (src.sysparm_query) p.query = src.sysparm_query
+        if (src.sysparm_order_by) p.order_by = src.sysparm_order_by
+        if (src.sysparm_order_by_desc) p.order_desc = src.sysparm_order_by_desc
+        if (src.sysparm_limit) p.limit = src.sysparm_limit
+        cfg.params = p
+      }
+      if (method === 'GET') {
+        cfg.url = `/data/${table}${id ? '/' + id : ''}`
+      } else {
+        cfg.headers.set('X-HTTP-Method', method)
+        cfg.method = 'post'
+        cfg.url = id ? `/data/${table}/${id}` : `/data/${table}`
+      }
+    }
+    return cfg
+  })
+  // Normalize the response so callers can always read `res.data.result`,
+  // regardless of how ServiceNow wraps the Scripted REST body.
+  client.interceptors.response.use(res => {
+    if (res.data && typeof res.data === 'object' && !('result' in res.data)) {
+      res.data = { result: res.data }
+    }
+    return res
+  })
+  return client
 }
 
 // Customers
@@ -257,14 +330,3 @@ export async function deletePartnerActivity(creds: SNCredentials, sysId: string)
   await client.delete(`/api/now/table/${TABLES.PARTNER_ACTIVITY}/${sysId}`)
 }
 
-export async function testConnection(creds: SNCredentials): Promise<boolean> {
-  try {
-    const client = createClient(creds)
-    await client.get('/api/now/table/sys_user', {
-      params: { sysparm_limit: 1, sysparm_fields: 'sys_id' },
-    })
-    return true
-  } catch {
-    return false
-  }
-}

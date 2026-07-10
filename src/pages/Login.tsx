@@ -1,93 +1,138 @@
 import { useState } from 'react'
-import { Briefcase, Loader2, AlertCircle } from 'lucide-react'
+import { Briefcase } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { testConnection } from '../services/servicenow'
+
+const DEFAULT_INSTANCE = 'dev405150.service-now.com'
+
+const styles = `
+@keyframes lgFloat {0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(26px,-30px) scale(1.08)}70%{transform:translate(-16px,18px) scale(.93)}}
+@keyframes lgGlow {0%,100%{box-shadow:0 8px 32px rgba(99,102,241,.45)}50%{box-shadow:0 8px 52px rgba(129,140,248,.75),0 0 0 8px rgba(99,102,241,.09)}}
+@keyframes lgSpin {to{transform:rotate(360deg)}}
+.lg-blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(90px);opacity:.32}
+.lg-b1{width:500px;height:500px;background:radial-gradient(circle,#6366f1,transparent);top:-170px;right:-150px;animation:lgFloat 9s ease-in-out infinite}
+.lg-b2{width:380px;height:380px;background:radial-gradient(circle,#8b5cf6,transparent);bottom:-110px;left:-90px;animation:lgFloat 12s ease-in-out infinite reverse}
+.lg-b3{width:260px;height:260px;background:radial-gradient(circle,#38bdf8,transparent);top:42%;right:-70px;animation:lgFloat 7s ease-in-out infinite 2s}
+.lg-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:42px 42px}
+.lg-icon{width:74px;height:74px;border-radius:22px;background:linear-gradient(135deg,#818cf8 0%,#6d28d9 100%);display:flex;align-items:center;justify-content:center;animation:lgGlow 3s ease-in-out infinite}
+.lg-spin{width:12px;height:12px;border-radius:50%;border:2px solid rgba(129,140,248,.3);border-top-color:#818cf8;animation:lgSpin .7s linear infinite}
+@media (prefers-reduced-motion: reduce){.lg-blob,.lg-icon{animation:none}}
+`
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, register } = useAuth()
+  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [instance, setInstance] = useState(DEFAULT_INSTANCE)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [displayName, setDisplayName] = useState('')
+  const [email, setEmail] = useState('')
+  const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!username || !password) return
+  function switchMode(m: 'login' | 'register') {
+    setMode(m)
     setError('')
-    setLoading(true)
-    const creds = { instance: 'dev405150.service-now.com', username, password }
-    const ok = await testConnection(creds)
-    if (ok) {
-      login(creds)
-    } else {
-      setError('Could not connect. Check your username and password.')
+  }
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    if (!username || !password || !instance) return
+    setError(''); setLoading(true)
+    try {
+      await login(instance, username, password)
+    } catch (err) {
+      setError((err as Error).message || 'Login failed.')
+      setLoading(false)
     }
-    setLoading(false)
+  }
+
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault()
+    if (!username || !password || !instance) return
+    if (password.length < 6) { setError('Password must be at least 6 characters.'); return }
+    if (password !== confirm) { setError('Passwords do not match.'); return }
+    setError(''); setLoading(true)
+    try {
+      await register(instance, { username, password, display_name: displayName || username, email })
+    } catch (err) {
+      setError((err as Error).message || 'Could not create account.')
+      setLoading(false)
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/40 mb-4">
-            <Briefcase className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900">BizTrack</h1>
-          <p className="text-slate-500 text-sm mt-1">Personal Business Manager</p>
+    <div className="min-h-screen relative overflow-hidden flex items-start justify-center" style={{ background: '#080a12' }}>
+      <style>{styles}</style>
+      <div className="lg-blob lg-b1" />
+      <div className="lg-blob lg-b2" />
+      <div className="lg-blob lg-b3" />
+      <div className="lg-grid" />
+
+      <div className="relative z-10 w-full max-w-[360px] px-6 py-12 m-auto flex flex-col items-center">
+        {/* Brand */}
+        <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-brand-300 bg-brand-500/12 border border-brand-500/30 rounded-full px-3.5 py-1 mb-4">
+          Personal Business
+        </span>
+        <div className="lg-icon mb-3">
+          <Briefcase className="w-8 h-8 text-white" />
         </div>
+        <h1 className="text-[30px] font-bold tracking-tight text-white leading-none mb-1">BizTrack</h1>
+        <p className="text-xs text-white/35 mb-4">Business Manager · ServiceNow</p>
+        <div className="w-10 h-0.5 rounded-full bg-gradient-to-r from-transparent via-white/15 to-transparent mb-5" />
 
-        <div className="card">
-          <h2 className="text-base font-semibold text-slate-900 mb-1">Sign in to ServiceNow</h2>
-          <p className="text-sm text-slate-400 mb-6">
-            Connected to <span className="font-medium text-brand-600">dev405150.service-now.com</span>
-          </p>
+        <p className="text-[15px] font-semibold text-white/85 mb-5">
+          {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
+        </p>
 
-          {error && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm mb-4">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              {error}
-            </div>
+        {/* Instance */}
+        <div className="w-full space-y-2.5">
+          <input
+            className="input-field"
+            type="text"
+            placeholder="instance.service-now.com"
+            autoCapitalize="off"
+            spellCheck={false}
+            value={instance}
+            onChange={e => setInstance(e.target.value)}
+          />
+
+          {mode === 'login' ? (
+            <form onSubmit={handleLogin} className="space-y-2.5">
+              <input className="input-field" type="text" placeholder="Username" autoComplete="username" autoCapitalize="off" value={username} onChange={e => setUsername(e.target.value)} autoFocus />
+              <input className="input-field" type="password" placeholder="Password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} />
+              {error && <p className="text-xs text-red-400 text-center font-medium py-0.5">{error}</p>}
+              <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3">
+                {loading ? <><span className="lg-spin" /> Signing in…</> : 'Sign In'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleRegister} className="space-y-2.5">
+              <input className="input-field" type="text" placeholder="Display name" autoComplete="name" value={displayName} onChange={e => setDisplayName(e.target.value)} autoFocus />
+              <input className="input-field" type="text" placeholder="Username" autoComplete="username" autoCapitalize="off" value={username} onChange={e => setUsername(e.target.value)} />
+              <input className="input-field" type="email" placeholder="Email (optional)" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} />
+              <input className="input-field" type="password" placeholder="Password (min 6 chars)" autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} />
+              <input className="input-field" type="password" placeholder="Confirm password" autoComplete="new-password" value={confirm} onChange={e => setConfirm(e.target.value)} />
+              {error && <p className="text-xs text-red-400 text-center font-medium py-0.5">{error}</p>}
+              <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3">
+                {loading ? <><span className="lg-spin" /> Creating…</> : 'Create Account'}
+              </button>
+            </form>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="label">Username</label>
-              <input
-                className="input-field"
-                type="text"
-                placeholder="admin"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                autoFocus
-              />
-            </div>
-            <div>
-              <label className="label">Password</label>
-              <input
-                className="input-field"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading || !username || !password}
-              className="btn-primary w-full justify-center py-3 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Connecting...</>
-              ) : (
-                'Connect & Sign In'
-              )}
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
+            className="w-full text-xs text-white/40 hover:text-white/70 transition-colors py-1.5"
+          >
+            {mode === 'login'
+              ? <>No account? <span className="text-brand-300 font-semibold">Create one</span></>
+              : <>Already have an account? <span className="text-brand-300 font-semibold">Sign in</span></>}
+          </button>
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-6">
-          Credentials are stored locally in your browser only.
+        <p className="text-[11px] text-white/20 mt-6 text-center">
+          Your session is stored only in this browser.
         </p>
       </div>
     </div>

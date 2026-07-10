@@ -13,7 +13,7 @@ const nav = [
 ]
 
 export default function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { logout, credentials } = useAuth()
+  const { logout, credentials, user } = useAuth()
 
   return (
     <>
@@ -70,7 +70,7 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
         {/* Footer */}
         <div className="px-3 py-4 border-t border-slate-100">
           <div className="px-3 py-2 mb-1">
-            <p className="text-xs font-medium text-slate-500 truncate">{credentials?.username}</p>
+            <p className="text-xs font-medium text-slate-500 truncate">{user?.display_name || user?.username}</p>
             <p className="text-xs text-slate-400 truncate">{credentials?.instance}</p>
           </div>
           <button

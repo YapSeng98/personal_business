@@ -36,10 +36,21 @@ export interface BusinessGoal {
   sys_updated_on: string
 }
 
+export interface AppUser {
+  sys_id: string
+  username: string
+  display_name: string
+  email: string
+}
+
+// Passed to the data service layer — instance + session token.
 export interface SNCredentials {
   instance: string
-  username: string
-  password: string
+  token: string
+}
+
+export interface Session extends SNCredentials {
+  user: AppUser
 }
 
 export interface SNResponse<T> {

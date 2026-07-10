@@ -1,19 +1,22 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import type { SNCredentials } from '../types'
+import type { SNCredentials, Session, AppUser } from '../types'
+import { authLogin, authRegister, authLogout } from '../services/servicenow'
 
 interface AuthContextType {
   credentials: SNCredentials | null
-  login: (creds: SNCredentials) => void
-  logout: () => void
+  user: AppUser | null
   isAuthenticated: boolean
+  login: (instance: string, username: string, password: string) => Promise<void>
+  register: (instance: string, data: { username: string; password: string; display_name: string; email: string }) => Promise<void>
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const STORAGE_KEY = 'biz_sn_creds'
+const STORAGE_KEY = 'biz_session'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [credentials, setCredentials] = useState<SNCredentials | null>(() => {
+  const [session, setSession] = useState<Session | null>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       return raw ? JSON.parse(raw) : null
@@ -23,23 +26,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   })
 
   useEffect(() => {
-    if (credentials) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(credentials))
-    } else {
-      localStorage.removeItem(STORAGE_KEY)
-    }
-  }, [credentials])
+    if (session) localStorage.setItem(STORAGE_KEY, JSON.stringify(session))
+    else localStorage.removeItem(STORAGE_KEY)
+  }, [session])
 
-  function login(creds: SNCredentials) {
-    setCredentials(creds)
+  async function login(instance: string, username: string, password: string) {
+    const inst = instance.trim().replace(/^https?:\/\//, '').replace(/\/$/, '')
+    const { token, user } = await authLogin(inst, username, password)
+    setSession({ instance: inst, token, user })
+  }
+
+  async function register(instance: string, data: { username: string; password: string; display_name: string; email: string }) {
+    const inst = instance.trim().replace(/^https?:\/\//, '').replace(/\/$/, '')
+    const { token, user } = await authRegister(inst, data)
+    setSession({ instance: inst, token, user })
   }
 
   function logout() {
-    setCredentials(null)
+    if (session) authLogout(session.instance, session.token)
+    setSession(null)
   }
 
   return (
-    <AuthContext.Provider value={{ credentials, login, logout, isAuthenticated: !!credentials }}>
+    <AuthContext.Provider
+      value={{
+        credentials: session ? { instance: session.instance, token: session.token } : null,
+        user: session?.user ?? null,
+        isAuthenticated: !!session,
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
