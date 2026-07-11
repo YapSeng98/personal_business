@@ -171,7 +171,12 @@ BizTrackAuth.prototype = {
       var field = fieldList[f];
       if (!field) continue;
       if (field.indexOf('.') > -1) {
-        out[field] = gr.getDisplayValue(field.split('.')[0]) || '';
+        // dot-walk: read the specific field on the referenced record, so it
+        // does not depend on the referenced table's "display field" setting.
+        var parts = field.split('.');
+        var el = gr.getElement(parts[0]);
+        var ref = (el && el.getRefRecord) ? el.getRefRecord() : null;
+        out[field] = (ref && ref.isValidRecord()) ? (ref.getValue(parts[1]) || '') : '';
       } else {
         out[field] = gr.getValue(field);
       }
