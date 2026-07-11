@@ -4,26 +4,29 @@ import {
   X, ChevronLeft, ChevronRight, MapPin, Tag, Users, UserPlus,
   CheckCircle2, Clock, Edit2, Trash2, Calendar as CalendarIcon,
   GraduationCap, Rocket, UserCheck, PartyPopper, Award, FileQuestion,
-  MessageCircle,
+  MessageCircle, Dumbbell, Trophy, Heart,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import {
   getPartnerActivities, getPartners, createPartnerActivity,
   updatePartnerActivity, deletePartnerActivity,
 } from '../../services/servicenow'
-import type { Activity, ActivityCategory } from '../../types'
+import type { Activity } from '../../types'
 import Badge from '../../components/ui/Badge'
 import ActivityMap from './ActivityMap'
 import { whatsappLink, activityInviteMessage } from '../../lib/whatsapp'
 import { matchPartnersToActivity } from '../../lib/partnerMatching'
 
-const categoryConfig: Record<ActivityCategory, { icon: React.ElementType; gradient: string; pill: string; border: string }> = {
+const categoryConfig: Record<string, { icon: React.ElementType; gradient: string; pill: string; border: string }> = {
   Meeting: { icon: Users, gradient: 'from-blue-50 to-white', pill: 'bg-blue-100 text-blue-700', border: 'border-blue-200' },
   Training: { icon: GraduationCap, gradient: 'from-violet-50 to-white', pill: 'bg-violet-100 text-violet-700', border: 'border-violet-200' },
   'Product Launch': { icon: Rocket, gradient: 'from-amber-50 to-white', pill: 'bg-amber-100 text-amber-700', border: 'border-amber-200' },
   Recruiting: { icon: UserCheck, gradient: 'from-emerald-50 to-white', pill: 'bg-emerald-100 text-emerald-700', border: 'border-emerald-200' },
   Social: { icon: PartyPopper, gradient: 'from-pink-50 to-white', pill: 'bg-pink-100 text-pink-700', border: 'border-pink-200' },
   Recognition: { icon: Award, gradient: 'from-yellow-50 to-white', pill: 'bg-yellow-100 text-yellow-700', border: 'border-yellow-200' },
+  Workout: { icon: Dumbbell, gradient: 'from-cyan-50 to-white', pill: 'bg-cyan-100 text-cyan-700', border: 'border-cyan-200' },
+  Sport: { icon: Trophy, gradient: 'from-teal-50 to-white', pill: 'bg-teal-100 text-teal-700', border: 'border-teal-200' },
+  Wellness: { icon: Heart, gradient: 'from-pink-50 to-white', pill: 'bg-pink-100 text-pink-700', border: 'border-pink-200' },
   Other: { icon: FileQuestion, gradient: 'from-slate-50 to-white', pill: 'bg-slate-100 text-slate-700', border: 'border-slate-200' },
 }
 

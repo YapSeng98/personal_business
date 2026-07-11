@@ -34,13 +34,14 @@ export function activityInviteMessage(opts: {
   time?: string
   address?: string
 }): string {
+  // Plain text only — emoji can arrive mangled on some devices/WhatsApp builds.
   const lines: string[] = [
-    `Hi${opts.partnerName ? ' ' + opts.partnerName.split(' ')[0] : ''}! 👋`,
+    `Hi${opts.partnerName ? ' ' + opts.partnerName.split(' ')[0] : ''},`,
     '',
     `You're invited to *${opts.title}*.`,
-    `🗓️ ${prettyDate(opts.date)}${opts.time ? ' · ' + opts.time : ''}`,
+    `Date: ${prettyDate(opts.date)}${opts.time ? ' at ' + opts.time : ''}`,
   ]
-  if (opts.address) lines.push(`📍 ${opts.address}`)
-  lines.push('', 'Hope to see you there! 🙌')
+  if (opts.address) lines.push(`Location: ${opts.address}`)
+  lines.push('', 'Hope to see you there!')
   return lines.join('\n')
 }

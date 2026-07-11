@@ -68,8 +68,13 @@ export type ActivityCategory =
   | 'Recruiting'
   | 'Social'
   | 'Recognition'
+  | 'Workout'
+  | 'Sport'
+  | 'Wellness'
   | 'Other'
 
+// Preset options shown in the picker. "Other" reveals a free-text field,
+// so u_category can also hold any custom value the user types.
 export const ACTIVITY_CATEGORIES: ActivityCategory[] = [
   'Meeting',
   'Training',
@@ -77,6 +82,9 @@ export const ACTIVITY_CATEGORIES: ActivityCategory[] = [
   'Recruiting',
   'Social',
   'Recognition',
+  'Workout',
+  'Sport',
+  'Wellness',
   'Other',
 ]
 
@@ -84,7 +92,7 @@ export interface Activity {
   sys_id: string
   u_title: string
   u_description: string
-  u_category: ActivityCategory
+  u_category: string  // a preset ActivityCategory or a custom "Other" value
   u_tags: string
   u_activity_date: string
   u_activity_time: string

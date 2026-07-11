@@ -20,6 +20,9 @@ const categoryDot: Record<string, string> = {
   Recruiting: 'bg-emerald-500',
   Social: 'bg-pink-500',
   Recognition: 'bg-yellow-500',
+  Workout: 'bg-cyan-500',
+  Sport: 'bg-teal-500',
+  Wellness: 'bg-rose-500',
   Other: 'bg-slate-400',
 }
 

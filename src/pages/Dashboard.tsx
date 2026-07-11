@@ -3,22 +3,24 @@ import { Link } from 'react-router-dom'
 import {
   Users, Target, ArrowRight, Calendar, UserPlus, Network,
   MapPin, Clock, ShoppingCart, GraduationCap, Rocket, UserCheck,
-  PartyPopper, Award, FileQuestion,
+  PartyPopper, Award, FileQuestion, Dumbbell, Trophy, Heart,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { getPartners, getGoals, getActivities, getPurchases } from '../services/servicenow'
-import type { ActivityCategory } from '../types'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Badge from '../components/ui/Badge'
 import { dateKey } from '../lib/calendar'
 
-const catConfig: Record<ActivityCategory, { icon: React.ElementType; tile: string }> = {
+const catConfig: Record<string, { icon: React.ElementType; tile: string }> = {
   Meeting: { icon: Users, tile: 'bg-blue-500/15 text-blue-300' },
   Training: { icon: GraduationCap, tile: 'bg-violet-500/15 text-violet-300' },
   'Product Launch': { icon: Rocket, tile: 'bg-amber-500/15 text-amber-300' },
   Recruiting: { icon: UserCheck, tile: 'bg-emerald-500/15 text-emerald-300' },
   Social: { icon: PartyPopper, tile: 'bg-pink-500/15 text-pink-300' },
   Recognition: { icon: Award, tile: 'bg-yellow-500/15 text-yellow-300' },
+  Workout: { icon: Dumbbell, tile: 'bg-cyan-500/15 text-cyan-300' },
+  Sport: { icon: Trophy, tile: 'bg-teal-500/15 text-teal-300' },
+  Wellness: { icon: Heart, tile: 'bg-rose-500/15 text-rose-300' },
   Other: { icon: FileQuestion, tile: 'bg-slate-500/15 text-slate-300' },
 }
 
