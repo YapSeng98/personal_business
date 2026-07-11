@@ -158,9 +158,11 @@ BizTrackAuth.prototype = {
   serialize: function (gr, fieldList) {
     var out = { sys_id: gr.getUniqueValue() };
     if (!fieldList || !fieldList.length) {
+      // scoped GlideRecord.getElements() returns a JS array (.length / [i]),
+      // not a Java list (.size() / .get(i)).
       var els = gr.getElements();
-      for (var i = 0; i < els.size(); i++) {
-        var name = els.get(i).getName();
+      for (var i = 0; i < els.length; i++) {
+        var name = els[i].getName();
         out[name] = gr.getValue(name);
       }
       return out;
