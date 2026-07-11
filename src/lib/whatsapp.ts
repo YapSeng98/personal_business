@@ -27,6 +27,16 @@ function prettyDate(d: string): string {
   return parsed.toLocaleDateString('en-MY', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 }
 
+// Emoji as \u{} escapes so the source stays pure ASCII (raw emoji bytes
+// were getting mangled to replacement chars in transit). At runtime these
+// are real emoji and encodeURIComponent() percent-encodes them correctly.
+const E = {
+  wave: '\u{1F44B}',      // 👋
+  calendar: '\u{1F4C5}',  // 📅
+  pin: '\u{1F4CD}',       // 📍
+  clap: '\u{1F64C}',      // 🙌
+}
+
 export function activityInviteMessage(opts: {
   partnerName?: string
   title: string
@@ -34,14 +44,13 @@ export function activityInviteMessage(opts: {
   time?: string
   address?: string
 }): string {
-  // Plain text only — emoji can arrive mangled on some devices/WhatsApp builds.
   const lines: string[] = [
-    `Hi${opts.partnerName ? ' ' + opts.partnerName.split(' ')[0] : ''},`,
+    `Hi${opts.partnerName ? ' ' + opts.partnerName.split(' ')[0] : ''}! ${E.wave}`,
     '',
     `You're invited to *${opts.title}*.`,
-    `Date: ${prettyDate(opts.date)}${opts.time ? ' at ' + opts.time : ''}`,
+    `${E.calendar} ${prettyDate(opts.date)}${opts.time ? ' at ' + opts.time : ''}`,
   ]
-  if (opts.address) lines.push(`Location: ${opts.address}`)
-  lines.push('', 'Hope to see you there!')
+  if (opts.address) lines.push(`${E.pin} ${opts.address}`)
+  lines.push('', `Hope to see you there! ${E.clap}`)
   return lines.join('\n')
 }
