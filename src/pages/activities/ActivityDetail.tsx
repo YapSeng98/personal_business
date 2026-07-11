@@ -4,6 +4,7 @@ import {
   X, ChevronLeft, ChevronRight, MapPin, Tag, Users, UserPlus,
   CheckCircle2, Clock, Edit2, Trash2, Calendar as CalendarIcon,
   GraduationCap, Rocket, UserCheck, PartyPopper, Award, FileQuestion,
+  MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import {
@@ -13,6 +14,7 @@ import {
 import type { Activity, ActivityCategory } from '../../types'
 import Badge from '../../components/ui/Badge'
 import ActivityMap from './ActivityMap'
+import { whatsappLink, activityInviteMessage } from '../../lib/whatsapp'
 import { matchPartnersToActivity } from '../../lib/partnerMatching'
 
 const categoryConfig: Record<ActivityCategory, { icon: React.ElementType; gradient: string; pill: string; border: string }> = {
@@ -97,6 +99,27 @@ export default function ActivityDetail({
   const linkedIds = new Set(links.map(l => l.u_partner))
   const suggestions = matchPartnersToActivity(activity, partners, linkedIds)
   const tags = activity.u_tags ? activity.u_tags.split(/[,;]/).map(t => t.trim()).filter(Boolean) : []
+
+  const phoneOf = (partnerId: string) => partners.find(p => p.sys_id === partnerId)?.u_phone
+
+  // Open a pre-filled WhatsApp invite (date/time/location) for this partner.
+  function openWhatsApp(phone: string | undefined, partnerName?: string) {
+    const link = whatsappLink(phone, activityInviteMessage({
+      partnerName,
+      title: activity.u_title,
+      date: activity.u_activity_date,
+      time: activity.u_activity_time,
+      address: activity.u_address,
+    }))
+    if (link) window.open(link, '_blank', 'noopener')
+  }
+
+  // Suggested-partner Invite: fire the WhatsApp invite first (sync, avoids
+  // popup blocking) then record the invitation.
+  function handleInvite(partner: { sys_id: string; u_name: string; u_phone: string }) {
+    openWhatsApp(partner.u_phone, partner.u_name)
+    inviteMut.mutate(partner.sys_id)
+  }
 
   return (
     <>
@@ -200,6 +223,11 @@ export default function ActivityDetail({
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         <Badge label={l.u_confirmed} variant={confirmVariant[l.u_confirmed] ?? 'yellow'} />
+                        {whatsappLink(phoneOf(l.u_partner)) && (
+                          <button className="w-7 h-7 rounded-full hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Message on WhatsApp" onClick={() => openWhatsApp(phoneOf(l.u_partner), l.u_partner_display)}>
+                            <MessageCircle className="w-4 h-4 text-emerald-400" />
+                          </button>
+                        )}
                         {l.u_confirmed !== 'confirmed' && (
                           <button className="w-7 h-7 rounded-full hover:bg-emerald-50 flex items-center justify-center transition-colors" title="Mark confirmed" onClick={() => confirmMut.mutate({ id: l.sys_id, u_confirmed: 'confirmed' })}>
                             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -227,23 +255,32 @@ export default function ActivityDetail({
                   <UserPlus className="w-4 h-4 text-emerald-500" />Suggested Partners
                 </h3>
                 <div className="space-y-2">
-                  {suggestions.map(({ partner, matchedTags }) => (
-                    <div key={partner.sys_id} className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-emerald-200 bg-emerald-50/50 px-3 py-2.5">
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-slate-800 truncate">{partner.u_name}</p>
-                        {matchedTags.length > 0 && (
-                          <p className="text-xs text-emerald-700 truncate">Matches: {matchedTags.join(', ')}</p>
-                        )}
+                  {suggestions.map(({ partner, matchedTags }) => {
+                    const hasPhone = !!whatsappLink(partner.u_phone)
+                    return (
+                      <div key={partner.sys_id} className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-emerald-200 bg-emerald-50/50 px-3 py-2.5">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-slate-800 truncate">{partner.u_name}</p>
+                          {matchedTags.length > 0 && (
+                            <p className="text-xs text-emerald-700 truncate">Matches: {matchedTags.join(', ')}</p>
+                          )}
+                        </div>
+                        <button
+                          className={`py-1 px-2.5 text-xs shrink-0 rounded-xl font-medium flex items-center gap-1.5 transition-colors ${
+                            hasPhone
+                              ? 'bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/25 hover:bg-emerald-500/25'
+                              : 'btn-secondary'
+                          }`}
+                          onClick={() => handleInvite(partner)}
+                          disabled={inviteMut.isPending}
+                          title={hasPhone ? 'Invite via WhatsApp' : 'Invite (no phone on file)'}
+                        >
+                          {hasPhone ? <MessageCircle className="w-3.5 h-3.5" /> : <UserPlus className="w-3.5 h-3.5" />}
+                          Invite
+                        </button>
                       </div>
-                      <button
-                        className="btn-secondary py-1 px-2.5 text-xs shrink-0"
-                        onClick={() => inviteMut.mutate(partner.sys_id)}
-                        disabled={inviteMut.isPending}
-                      >
-                        <UserPlus className="w-3.5 h-3.5" /> Invite
-                      </button>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
             )}

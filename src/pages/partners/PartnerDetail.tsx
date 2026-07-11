@@ -4,13 +4,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   X, ChevronLeft, ChevronRight, Mail, Phone, Users, Tag,
   StickyNote, Calendar as CalendarIcon, CheckCircle2, Clock, Edit2, Trash2,
-  UserCheck, ExternalLink,
+  UserCheck, ExternalLink, MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { getPartnerActivities, updatePartnerActivity } from '../../services/servicenow'
 import type { Partner } from '../../types'
 import Badge from '../../components/ui/Badge'
 import { parseTags } from '../../lib/partnerMatching'
+import { whatsappLink } from '../../lib/whatsapp'
 
 const statusVariant: Record<string, 'green' | 'slate' | 'yellow'> = {
   active: 'green',
@@ -79,6 +80,7 @@ export default function PartnerDetail({
   }, [onClose, onPrev, onNext, hasPrev, hasNext])
 
   const tags = parseTags(partner.u_interest_tags)
+  const waLink = whatsappLink(partner.u_phone)
 
   return (
     <>
@@ -139,6 +141,16 @@ export default function PartnerDetail({
                 <div className="flex items-center gap-2.5 text-sm text-slate-600">
                   <Phone className="w-4 h-4 text-slate-400" />{partner.u_phone}
                 </div>
+              )}
+              {waLink && (
+                <a
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-1 py-1.5 px-3 rounded-xl text-sm font-medium bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/25 hover:bg-emerald-500/25 transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4" /> Message on WhatsApp
+                </a>
               )}
             </div>
 
