@@ -30,6 +30,16 @@ BizTrackAuth.prototype = {
     u_activity: true,
     u_partner_activity: true
   },
+  // Reference field (short name) -> the table it points at. Used for
+  // dot-walk resolution so it works even if a field is a plain string or
+  // its reference table is mis-set.
+  REF_MAP: {
+    u_sponsor: 'u_partner',
+    u_partner_of: 'u_partner',
+    u_customer: 'u_customer_master',
+    u_partner: 'u_partner',
+    u_activity: 'u_activity'
+  },
 
   initialize: function () {},
 
@@ -171,12 +181,17 @@ BizTrackAuth.prototype = {
       var field = fieldList[f];
       if (!field) continue;
       if (field.indexOf('.') > -1) {
-        // dot-walk: read the specific field on the referenced record, so it
-        // does not depend on the referenced table's "display field" setting.
+        // dot-walk: load the referenced record by its sys_id from the known
+        // target table. Works regardless of the field's type/reference config.
         var parts = field.split('.');
-        var el = gr.getElement(parts[0]);
-        var ref = (el && el.getRefRecord) ? el.getRefRecord() : null;
-        out[field] = (ref && ref.isValidRecord()) ? (ref.getValue(parts[1]) || '') : '';
+        var refVal = gr.getValue(parts[0]);
+        var target = this.REF_MAP[parts[0]];
+        if (refVal && target) {
+          var rr = new GlideRecord(this.real(target));
+          out[field] = rr.get(refVal) ? (rr.getValue(parts[1]) || '') : '';
+        } else {
+          out[field] = '';
+        }
       } else {
         out[field] = gr.getValue(field);
       }
