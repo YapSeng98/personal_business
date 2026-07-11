@@ -8,7 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   isDemo: boolean
   login: (instance: string, username: string, password: string) => Promise<void>
-  register: (instance: string, data: { username: string; password: string; display_name: string; email: string }) => Promise<void>
+  register: (instance: string, data: { username: string; password: string; display_name: string; email: string; upline?: string }) => Promise<void>
   loginDemo: () => void
   logout: () => void
 }
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession({ instance: inst, token, user })
   }
 
-  async function register(instance: string, data: { username: string; password: string; display_name: string; email: string }) {
+  async function register(instance: string, data: { username: string; password: string; display_name: string; email: string; upline?: string }) {
     const inst = instance.trim().replace(/^https?:\/\//, '').replace(/\/$/, '')
     const { token, user } = await authRegister(inst, data)
     setSession({ instance: inst, token, user })

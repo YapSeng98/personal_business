@@ -39,7 +39,7 @@ export async function authLogin(instance: string, username: string, password: st
 
 export async function authRegister(
   instance: string,
-  data: { username: string; password: string; display_name: string; email: string }
+  data: { username: string; password: string; display_name: string; email: string; upline?: string }
 ): Promise<{ token: string; user: AppUser }> {
   try {
     const res = await axios.post(`${apiBase(instance)}/auth/register`, data, {

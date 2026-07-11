@@ -26,6 +26,7 @@ export default function Login() {
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [upline, setUpline] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -53,7 +54,7 @@ export default function Login() {
     if (password !== confirm) { setError('Passwords do not match.'); return }
     setError(''); setLoading(true)
     try {
-      await register(DEFAULT_INSTANCE, { username, password, display_name: displayName || username, email })
+      await register(DEFAULT_INSTANCE, { username, password, display_name: displayName || username, email, upline })
     } catch (err) {
       setError((err as Error).message || 'Could not create account.')
       setLoading(false)
@@ -99,6 +100,7 @@ export default function Login() {
               <input className="input-field" type="text" placeholder="Display name" autoComplete="name" value={displayName} onChange={e => setDisplayName(e.target.value)} autoFocus />
               <input className="input-field" type="text" placeholder="Username" autoComplete="username" autoCapitalize="off" value={username} onChange={e => setUsername(e.target.value)} />
               <input className="input-field" type="email" placeholder="Email (optional)" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} />
+              <input className="input-field" type="text" placeholder="Upline username (optional)" autoCapitalize="off" value={upline} onChange={e => setUpline(e.target.value)} />
               <input className="input-field" type="password" placeholder="Password (min 6 chars)" autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} />
               <input className="input-field" type="password" placeholder="Confirm password" autoComplete="new-password" value={confirm} onChange={e => setConfirm(e.target.value)} />
               {error && <p className="text-xs text-red-400 text-center font-medium py-0.5">{error}</p>}

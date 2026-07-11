@@ -94,6 +94,7 @@ BizTrackAuth.prototype = {
     var u = new GlideRecord(this.real(this.TABLE_USER));
     if (!u.get(s.getValue('u_user'))) return null;
     if (u.getValue('u_active') === 'false') return null;
+    this.currentUserId = u.getUniqueValue(); // used for ownership/visibility
     return u;
   },
   logout: function (token) {
@@ -136,6 +137,15 @@ BizTrackAuth.prototype = {
     u.setValue('u_email', (body.email || '').trim());
     u.setValue('u_active', true);
     u.setValue('u_last_login', new GlideDateTime());
+    // Link to upline account (referral) so the upline can see this user's data.
+    var uplineName = (body.upline || '').trim().toLowerCase();
+    if (uplineName && uplineName !== username) {
+      var up = new GlideRecord(this.real(this.TABLE_USER));
+      up.addQuery('u_username', uplineName);
+      up.setLimit(1);
+      up.query();
+      if (up.next()) u.setValue('u_upline', up.getUniqueValue());
+    }
     var id = u.insert();
     if (!id) return { error: 'Could not create the account.' };
 
@@ -160,6 +170,34 @@ BizTrackAuth.prototype = {
     u.setValue('u_last_login', new GlideDateTime());
     u.update();
     return { token: this.createSession(u.getUniqueValue(), body.device || ''), user: this.userPayload(u) };
+  },
+
+  // ---- visibility: owner + downline accounts ------------------------------
+  // Returns [self + every account below me in the u_upline tree]. A record is
+  // visible only if its u_owner is in this set (downline can't see upline).
+  myOwners: function () {
+    if (this._owners) return this._owners;
+    var ids = [this.currentUserId];
+    var frontier = [this.currentUserId];
+    var guard = 0;
+    while (frontier.length && guard < 500) {
+      guard++;
+      var gr = new GlideRecord(this.real(this.TABLE_USER));
+      gr.addQuery('u_upline', 'IN', frontier.join(','));
+      gr.query();
+      var next = [];
+      while (gr.next()) {
+        var id = gr.getUniqueValue();
+        if (ids.indexOf(id) < 0) { ids.push(id); next.push(id); }
+      }
+      frontier = next;
+    }
+    this._owners = ids;
+    return ids;
+  },
+  canSee: function (gr) {
+    var o = gr.getValue('u_owner');
+    return !!o && this.myOwners().indexOf(o) > -1;
   },
 
   // ---- generic data proxy -------------------------------------------------
@@ -205,6 +243,7 @@ BizTrackAuth.prototype = {
 
     var gr = new GlideRecord(this.real(table));
     if (params.query) gr.addEncodedQuery(params.query);
+    gr.addQuery('u_owner', 'IN', this.myOwners().join(',')); // visibility filter
     if (params.order_by) {
       if (String(params.order_desc) === 'true') gr.orderByDesc(params.order_by);
       else gr.orderBy(params.order_by);
@@ -221,7 +260,7 @@ BizTrackAuth.prototype = {
   getOne: function (table, sysId, fields) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
     var gr = new GlideRecord(this.real(table));
-    if (!gr.get(sysId)) return { error: 'Record not found.' };
+    if (!gr.get(sysId) || !this.canSee(gr)) return { error: 'Record not found.' };
     var list = (fields || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
     return this.serialize(gr, list);
   },
@@ -231,6 +270,7 @@ BizTrackAuth.prototype = {
     var gr = new GlideRecord(this.real(table));
     gr.initialize();
     this._applyBody(gr, body);
+    if (this.currentUserId) gr.setValue('u_owner', this.currentUserId); // stamp creator
     var id = gr.insert();
     if (!id) return { error: 'Create failed.' };
     return this.serialize(gr, null);
@@ -239,7 +279,7 @@ BizTrackAuth.prototype = {
   update: function (table, sysId, body) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
     var gr = new GlideRecord(this.real(table));
-    if (!gr.get(sysId)) return { error: 'Record not found.' };
+    if (!gr.get(sysId) || !this.canSee(gr)) return { error: 'Record not found.' };
     this._applyBody(gr, body);
     gr.update();
     return this.serialize(gr, null);
@@ -248,7 +288,7 @@ BizTrackAuth.prototype = {
   remove: function (table, sysId) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
     var gr = new GlideRecord(this.real(table));
-    if (!gr.get(sysId)) return { error: 'Record not found.' };
+    if (!gr.get(sysId) || !this.canSee(gr)) return { error: 'Record not found.' };
     gr.deleteRecord();
     return { deleted: true };
   },
@@ -256,7 +296,8 @@ BizTrackAuth.prototype = {
   _applyBody: function (gr, body) {
     for (var key in body) {
       if (!body.hasOwnProperty(key)) continue;
-      if (key === 'sys_id' || key.indexOf('.') > -1) continue;
+      // never let the client set sys_id, dot-walk keys, or the owner stamp
+      if (key === 'sys_id' || key === 'u_owner' || key.indexOf('.') > -1) continue;
       gr.setValue(key, body[key]);
     }
   },
