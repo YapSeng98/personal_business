@@ -30,6 +30,11 @@ BizTrackAuth.prototype = {
     u_activity: true,
     u_partner_activity: true
   },
+  // Shared tables are visible to EVERY logged-in user (not owner-scoped).
+  // Activities are team-wide events; everyone should see them.
+  SHARED: {
+    u_activity: true
+  },
   // Reference field (short name) -> the table it points at. Used for
   // dot-walk resolution so it works even if a field is a plain string or
   // its reference table is mis-set.
@@ -111,7 +116,8 @@ BizTrackAuth.prototype = {
       sys_id: u.getUniqueValue(),
       username: u.getValue('u_username'),
       display_name: u.getValue('u_display_name'),
-      email: u.getValue('u_email')
+      email: u.getValue('u_email'),
+      upline: u.getValue('u_upline')
     };
   },
 
@@ -243,7 +249,7 @@ BizTrackAuth.prototype = {
 
     var gr = new GlideRecord(this.real(table));
     if (params.query) gr.addEncodedQuery(params.query);
-    gr.addQuery('u_owner', 'IN', this.myOwners().join(',')); // visibility filter
+    if (!this.SHARED[table]) gr.addQuery('u_owner', 'IN', this.myOwners().join(',')); // visibility filter (shared tables skip it)
     if (params.order_by) {
       if (String(params.order_desc) === 'true') gr.orderByDesc(params.order_by);
       else gr.orderBy(params.order_by);
@@ -260,7 +266,7 @@ BizTrackAuth.prototype = {
   getOne: function (table, sysId, fields) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
     var gr = new GlideRecord(this.real(table));
-    if (!gr.get(sysId) || !this.canSee(gr)) return { error: 'Record not found.' };
+    if (!gr.get(sysId) || (!this.SHARED[table] && !this.canSee(gr))) return { error: 'Record not found.' };
     var list = (fields || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
     return this.serialize(gr, list);
   },
@@ -279,7 +285,7 @@ BizTrackAuth.prototype = {
   update: function (table, sysId, body) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
     var gr = new GlideRecord(this.real(table));
-    if (!gr.get(sysId) || !this.canSee(gr)) return { error: 'Record not found.' };
+    if (!gr.get(sysId) || (!this.SHARED[table] && !this.canSee(gr))) return { error: 'Record not found.' };
     this._applyBody(gr, body);
     gr.update();
     return this.serialize(gr, null);
@@ -288,7 +294,7 @@ BizTrackAuth.prototype = {
   remove: function (table, sysId) {
     if (!this.assertTable(table)) return { error: 'Table not allowed: ' + table };
     var gr = new GlideRecord(this.real(table));
-    if (!gr.get(sysId) || !this.canSee(gr)) return { error: 'Record not found.' };
+    if (!gr.get(sysId) || (!this.SHARED[table] && !this.canSee(gr))) return { error: 'Record not found.' };
     gr.deleteRecord();
     return { deleted: true };
   },
