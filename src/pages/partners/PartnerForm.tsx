@@ -21,6 +21,7 @@ export default function PartnerForm({ initial, partners, onSubmit, onCancel, loa
     u_email: initial?.u_email ?? '',
     u_phone: initial?.u_phone ?? '',
     u_status: initial?.u_status ?? 'prospect',
+    u_account_type: initial?.u_account_type ?? '',
     u_network_position: initial?.u_network_position ?? 'prospect',
     u_rank: initial?.u_rank ?? '',
     u_sponsor: initial?.u_sponsor ?? '',
@@ -56,6 +57,14 @@ export default function PartnerForm({ initial, partners, onSubmit, onCancel, loa
             <option value="prospect">Prospect</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div>
+          <label className="label">Account Type</label>
+          <select className="input-field" value={form.u_account_type} onChange={e => set('u_account_type', e.target.value)}>
+            <option value="">Select...</option>
+            <option value="ABO">ABO — Business Owner</option>
+            <option value="ABC">ABC — Business Customer</option>
           </select>
         </div>
         <div>

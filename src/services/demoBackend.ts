@@ -64,26 +64,27 @@ function seed() {
   ]
 
   // ── Partners (a real tree + a spouse link + unassigned) ──
-  const PA = (sys_id: string, name: string, status: string, pos: string, rank: string, sponsor: string, partnerOf: string, tags: string, email = '', phone = '') =>
-    ({ sys_id, u_name: name, u_email: email, u_phone: phone, u_status: status, u_network_position: pos, u_rank: rank, u_sponsor: sponsor, u_partner_of: partnerOf, u_customer: '', u_interest_tags: tags, u_notes: '', sys_created_on: monthsAgo(4) })
+  const PA = (sys_id: string, name: string, status: string, accountType: string, pos: string, rank: string, sponsor: string, partnerOf: string, tags: string, email = '', phone = '') =>
+    ({ sys_id, u_name: name, u_email: email, u_phone: phone, u_status: status, u_account_type: accountType, u_network_position: pos, u_rank: rank, u_sponsor: sponsor, u_partner_of: partnerOf, u_customer: '', u_interest_tags: tags, u_notes: '', sys_created_on: monthsAgo(4) })
   store.u_partner = [
-    PA('p1', 'Sarah Lim', 'active', 'downline', 'Emerald', '', '', 'Health, Business Building', 'sarah@biz.my', '012-1112222'),
-    PA('p2', 'Ahmad Zaki', 'active', 'downline', 'Platinum', 'p1', '', 'Health, Recruiting', 'ahmad@biz.my', '013-3334444'),
-    PA('p3', 'Mei Ling', 'active', 'downline', 'Gold Producer', 'p1', '', 'Beauty, Skincare', 'meiling@biz.my'),
-    PA('p4', 'Ravi Kumar', 'prospect', 'downline', 'Silver Producer', 'p2', '', 'Fitness, Recruiting'),
-    PA('p5', 'Jenny Tan', 'active', 'cross_line', '', '', 'p3', 'Beauty, Social', 'jenny@biz.my'),
-    PA('p6', 'David Wong', 'prospect', 'prospect', '', '', '', 'Business Building'),
+    PA('p1', 'Sarah Lim', 'active', 'ABO', 'downline', 'Emerald', '', '', 'Health, Business Building', 'sarah@biz.my', '012-1112222'),
+    PA('p2', 'Ahmad Zaki', 'active', 'ABO', 'downline', 'Platinum', 'p1', '', 'Health, Recruiting', 'ahmad@biz.my', '013-3334444'),
+    PA('p3', 'Mei Ling', 'active', 'ABO', 'downline', 'Gold Producer', 'p1', '', 'Beauty, Skincare', 'meiling@biz.my'),
+    PA('p4', 'Ravi Kumar', 'prospect', 'ABC', 'downline', 'Silver Producer', 'p2', '', 'Fitness, Recruiting'),
+    PA('p5', 'Jenny Tan', 'active', 'ABC', 'cross_line', '', '', 'p3', 'Beauty, Social', 'jenny@biz.my'),
+    PA('p6', 'David Wong', 'prospect', '', 'prospect', '', '', '', 'Business Building'),
   ]
 
   // ── Activities (KL landmarks with real coords for the map) ──
-  const AC = (sys_id: string, title: string, cat: string, tags: string, day: number, time: string, addr: string, lat: string, lng: string) =>
-    ({ sys_id, u_title: title, u_description: title + '.', u_category: cat, u_tags: tags, u_activity_date: thisMonth(day), u_activity_time: time, u_address: addr, u_lat: lat, u_lng: lng, u_geocode_status: 'success', u_status: 'planned', u_source: 'manual', sys_created_on: monthsAgo(0) })
+  const AC = (sys_id: string, title: string, cat: string, tags: string, day: number, time: string, addr: string, lat: string, lng: string, allDay = 'false') =>
+    ({ sys_id, u_title: title, u_description: title + '.', u_category: cat, u_tags: tags, u_activity_date: thisMonth(day), u_activity_time: time, u_all_day: allDay, u_address: addr, u_lat: lat, u_lng: lng, u_geocode_status: 'success', u_status: 'planned', u_source: 'manual', sys_created_on: monthsAgo(0) })
   store.u_activity = [
     AC('a1', 'Product Launch — Artistry', 'Product Launch', 'Beauty, Skincare', 6, '14:00', 'Pavilion Kuala Lumpur', '3.1490', '101.7130'),
     AC('a2', 'Health Talk & Tasting', 'Meeting', 'Health, Business Building', 12, '19:30', 'Suria KLCC, Kuala Lumpur', '3.1579', '101.7123'),
     AC('a3', 'Recruiting Open Day', 'Recruiting', 'Recruiting', 18, '10:00', '1 Utama Shopping Centre, PJ', '3.1502', '101.6153'),
     AC('a4', 'Leadership Training', 'Training', 'Business Building, Recruiting', 22, '09:00', 'Sunway Pyramid, Subang Jaya', '3.0726', '101.6070'),
     AC('a5', 'Recognition Night', 'Recognition', 'Social', 27, '20:00', 'MITEC, Kuala Lumpur', '3.1710', '101.6640'),
+    AC('a6', 'Charity Fun Run', 'Social', 'Wellness, Community', 15, '', 'Taman Tasik Perdana, KL', '3.1440', '101.6869', 'true'),
   ]
 
   // ── Invitations / RSVP ──

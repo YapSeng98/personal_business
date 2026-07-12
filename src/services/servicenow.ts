@@ -216,7 +216,7 @@ export async function getActivities(creds: SNCredentials): Promise<Activity[]> {
   const client = createClient(creds)
   const res = await client.get(`/api/now/table/${TABLES.ACTIVITY}`, {
     params: {
-      sysparm_fields: 'sys_id,u_title,u_description,u_category,u_tags,u_activity_date,u_activity_time,u_address,u_lat,u_lng,u_geocode_status,u_status,u_source,sys_created_on,sys_updated_on',
+      sysparm_fields: 'sys_id,u_title,u_description,u_category,u_tags,u_activity_date,u_activity_time,u_all_day,u_address,u_lat,u_lng,u_geocode_status,u_status,u_source,sys_created_on,sys_updated_on',
       sysparm_order_by: 'u_activity_date',
       sysparm_limit: 1000,
     },
@@ -256,7 +256,7 @@ export async function getPartners(creds: SNCredentials): Promise<Partner[]> {
   const client = createClient(creds)
   const res = await client.get(`/api/now/table/${TABLES.PARTNER}`, {
     params: {
-      sysparm_fields: 'sys_id,u_name,u_email,u_phone,u_status,u_network_position,u_rank,u_sponsor,u_sponsor.u_name,u_partner_of,u_partner_of.u_name,u_customer,u_customer.u_name,u_interest_tags,u_notes,sys_created_on,sys_updated_on',
+      sysparm_fields: 'sys_id,u_name,u_email,u_phone,u_status,u_account_type,u_network_position,u_rank,u_sponsor,u_sponsor.u_name,u_partner_of,u_partner_of.u_name,u_customer,u_customer.u_name,u_interest_tags,u_notes,sys_created_on,sys_updated_on',
       sysparm_order_by: 'u_name',
       sysparm_limit: 1000,
     },

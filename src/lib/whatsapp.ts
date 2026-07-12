@@ -42,13 +42,17 @@ export function activityInviteMessage(opts: {
   title: string
   date: string
   time?: string
+  allDay?: boolean
   address?: string
 }): string {
+  const when = opts.allDay
+    ? ' (all day)'
+    : (opts.time ? ' at ' + opts.time : '')
   const lines: string[] = [
     `Hi${opts.partnerName ? ' ' + opts.partnerName.split(' ')[0] : ''}! ${E.wave}`,
     '',
     `You're invited to *${opts.title}*.`,
-    `${E.calendar} ${prettyDate(opts.date)}${opts.time ? ' at ' + opts.time : ''}`,
+    `${E.calendar} ${prettyDate(opts.date)}${when}`,
   ]
   if (opts.address) lines.push(`${E.pin} ${opts.address}`)
   lines.push('', `Hope to see you there! ${E.clap}`)

@@ -119,6 +119,7 @@ export default function PartnerDetail({
               <h2 className="text-lg font-bold text-slate-900 leading-tight truncate">{partner.u_name}</h2>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 <Badge label={partner.u_status} variant={statusVariant[partner.u_status] ?? 'slate'} />
+                {partner.u_account_type && <Badge label={partner.u_account_type} variant="purple" />}
                 <Badge label={partner.u_network_position.replace('_', '-')} variant="blue" />
                 {partner.u_rank && <Badge label={partner.u_rank} variant="purple" />}
                 {!partner.u_sponsor && <Badge label="Unassigned" variant="yellow" />}

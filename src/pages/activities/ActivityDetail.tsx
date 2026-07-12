@@ -111,7 +111,8 @@ export default function ActivityDetail({
       partnerName,
       title: activity.u_title,
       date: activity.u_activity_date,
-      time: activity.u_activity_time,
+      time: activity.u_all_day === 'true' ? '' : activity.u_activity_time,
+      allDay: activity.u_all_day === 'true',
       address: activity.u_address,
     }))
     if (link) window.open(link, '_blank', 'noopener')
@@ -173,7 +174,9 @@ export default function ActivityDetail({
             <div className="flex items-center gap-2 text-sm text-slate-600">
               <CalendarIcon className="w-4 h-4 text-slate-400" />
               {activity.u_activity_date}
-              {activity.u_activity_time && <span> · {activity.u_activity_time}</span>}
+              {activity.u_all_day === 'true'
+                ? <span> · All day</span>
+                : activity.u_activity_time && <span> · {activity.u_activity_time}</span>}
             </div>
 
             {activity.u_description && (

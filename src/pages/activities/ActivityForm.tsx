@@ -16,6 +16,7 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
     initial?.u_category ? (presetInitial ? initial.u_category : 'Other') : 'Meeting'
   )
   const [customCategory, setCustomCategory] = useState(presetInitial ? '' : (initial?.u_category ?? ''))
+  const [allDay, setAllDay] = useState(initial?.u_all_day === 'true')
 
   const [form, setForm] = useState({
     u_title: initial?.u_title ?? '',
@@ -34,7 +35,12 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const u_category = category === 'Other' && customCategory.trim() ? customCategory.trim() : category
-    onSubmit({ ...form, u_category })
+    onSubmit({
+      ...form,
+      u_category,
+      u_all_day: allDay ? 'true' : 'false',
+      u_activity_time: allDay ? '' : form.u_activity_time,
+    })
   }
 
   return (
@@ -75,14 +81,22 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
             />
           </div>
         )}
-        <div>
+        <div className="col-span-2">
+          <label className="flex items-center gap-2 cursor-pointer select-none w-fit">
+            <input type="checkbox" className="w-4 h-4 rounded accent-brand-600" checked={allDay} onChange={e => setAllDay(e.target.checked)} />
+            <span className="text-sm text-slate-700">All day <span className="text-slate-400">— no specific time</span></span>
+          </label>
+        </div>
+        <div className={allDay ? 'col-span-2' : ''}>
           <label className="label">Date *</label>
           <input className="input-field" type="date" required value={form.u_activity_date} onChange={e => set('u_activity_date', e.target.value)} />
         </div>
-        <div>
-          <label className="label">Time</label>
-          <input className="input-field" type="time" value={form.u_activity_time} onChange={e => set('u_activity_time', e.target.value)} />
-        </div>
+        {!allDay && (
+          <div>
+            <label className="label">Time</label>
+            <input className="input-field" type="time" value={form.u_activity_time} onChange={e => set('u_activity_time', e.target.value)} />
+          </div>
+        )}
         <div className="col-span-2">
           <label className="label">Address</label>
           <input className="input-field" value={form.u_address} onChange={e => set('u_address', e.target.value)} placeholder="Full address for map lookup" />

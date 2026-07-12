@@ -96,6 +96,7 @@ export interface Activity {
   u_tags: string
   u_activity_date: string
   u_activity_time: string
+  u_all_day: string   // 'true' = whole-day activity (no specific time)
   u_address: string
   u_lat: string
   u_lng: string
@@ -112,6 +113,7 @@ export interface Partner {
   u_email: string
   u_phone: string
   u_status: 'active' | 'inactive' | 'prospect'
+  u_account_type: 'ABO' | 'ABC' | ''   // ABO = Business Owner, ABC = Business Customer
   u_network_position: 'upline' | 'downline' | 'cross_line' | 'prospect'
   u_rank: string
   u_sponsor: string

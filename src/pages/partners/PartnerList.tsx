@@ -176,7 +176,10 @@ export default function PartnerList() {
                     </div>
                   </td>
                   <td className="px-6 py-4 hidden md:table-cell">
-                    <Badge label={p.u_status} variant={statusVariant[p.u_status] ?? 'slate'} />
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Badge label={p.u_status} variant={statusVariant[p.u_status] ?? 'slate'} />
+                      {p.u_account_type && <Badge label={p.u_account_type} variant="purple" />}
+                    </div>
                   </td>
                   <td className="px-6 py-4 hidden md:table-cell">
                     <p className="text-slate-600 capitalize">{p.u_network_position.replace('_', '-')}</p>

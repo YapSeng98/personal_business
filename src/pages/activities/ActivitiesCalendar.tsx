@@ -228,7 +228,9 @@ export default function ActivitiesCalendar() {
                       <span className={`w-2 h-2 rounded-full shrink-0 ${categoryDot[a.u_category] ?? 'bg-slate-400'}`} />
                       <p className="text-sm font-medium text-slate-800 truncate">{a.u_title}</p>
                     </div>
-                    {a.u_activity_time && <p className="text-xs text-slate-400 mt-0.5">{a.u_activity_time}</p>}
+                    {a.u_all_day === 'true'
+                      ? <p className="text-xs text-slate-400 mt-0.5">All day</p>
+                      : a.u_activity_time && <p className="text-xs text-slate-400 mt-0.5">{a.u_activity_time}</p>}
                   </button>
                 ))}
               </div>
