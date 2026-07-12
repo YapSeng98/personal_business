@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight, Plus, Upload, Calendar as CalendarIcon } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
@@ -37,12 +38,29 @@ export default function ActivitiesCalendar() {
   const [bulkOpen, setBulkOpen] = useState(false)
   const [editActivity, setEditActivity] = useState<Activity | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const { data: activities = [], isLoading } = useQuery({
     queryKey: ['activities'],
     queryFn: () => getActivities(credentials!),
     enabled: !!credentials,
   })
+
+  // Deep-link: arriving with ?activity=<id> (e.g. from the Dashboard) opens
+  // that activity's detail — jump to its month/day and select it.
+  useEffect(() => {
+    const wantId = searchParams.get('activity')
+    if (!wantId || !activities.length) return
+    const a = activities.find(x => x.sys_id === wantId)
+    if (a && a.u_activity_date) {
+      const [y, m] = a.u_activity_date.split('-').map(Number)
+      if (y && m) { setViewYear(y); setViewMonth(m - 1) }
+      setSelectedDate(a.u_activity_date)
+      setSelectedId(a.sys_id)
+    }
+    searchParams.delete('activity')
+    setSearchParams(searchParams, { replace: true })
+  }, [activities, searchParams, setSearchParams])
 
   const createMut = useMutation({
     mutationFn: async (data: Partial<Activity>) => {

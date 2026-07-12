@@ -131,7 +131,7 @@ export default function Dashboard() {
                 const cfg = catConfig[a.u_category] ?? catConfig.Other
                 const Icon = cfg.icon
                 return (
-                  <Link key={a.sys_id} to="/activities" className="flex items-center gap-3 rounded-xl border border-slate-100 hover:border-brand-300 hover:bg-brand-50/40 px-3 py-2.5 transition-colors">
+                  <Link key={a.sys_id} to={`/activities?activity=${a.sys_id}`} className="flex items-center gap-3 rounded-xl border border-slate-100 hover:border-brand-300 hover:bg-brand-50/40 px-3 py-2.5 transition-colors">
                     <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${cfg.tile}`}>
                       <Icon className="w-4.5 h-4.5 w-5 h-5" />
                     </div>
