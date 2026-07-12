@@ -16,6 +16,7 @@ import Badge from '../../components/ui/Badge'
 import ActivityMap from './ActivityMap'
 import { whatsappLink, activityInviteMessage } from '../../lib/whatsapp'
 import { matchPartnersToActivity } from '../../lib/partnerMatching'
+import { isAllDay } from '../../lib/activity'
 
 const categoryConfig: Record<string, { icon: React.ElementType; gradient: string; pill: string; border: string }> = {
   Meeting: { icon: Users, gradient: 'from-blue-50 to-white', pill: 'bg-blue-100 text-blue-700', border: 'border-blue-200' },
@@ -111,8 +112,8 @@ export default function ActivityDetail({
       partnerName,
       title: activity.u_title,
       date: activity.u_activity_date,
-      time: activity.u_all_day === 'true' ? '' : activity.u_activity_time,
-      allDay: activity.u_all_day === 'true',
+      time: isAllDay(activity) ? '' : activity.u_activity_time,
+      allDay: isAllDay(activity),
       address: activity.u_address,
     }))
     if (link) window.open(link, '_blank', 'noopener')
@@ -174,7 +175,7 @@ export default function ActivityDetail({
             <div className="flex items-center gap-2 text-sm text-slate-600">
               <CalendarIcon className="w-4 h-4 text-slate-400" />
               {activity.u_activity_date}
-              {activity.u_all_day === 'true'
+              {isAllDay(activity)
                 ? <span> · All day</span>
                 : activity.u_activity_time && <span> · {activity.u_activity_time}</span>}
             </div>

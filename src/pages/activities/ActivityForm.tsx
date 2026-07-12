@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { ACTIVITY_CATEGORIES, type Activity } from '../../types'
+import { isAllDay } from '../../lib/activity'
 
 interface Props {
   initial?: Partial<Activity>
@@ -16,7 +17,7 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
     initial?.u_category ? (presetInitial ? initial.u_category : 'Other') : 'Meeting'
   )
   const [customCategory, setCustomCategory] = useState(presetInitial ? '' : (initial?.u_category ?? ''))
-  const [allDay, setAllDay] = useState(initial?.u_all_day === 'true')
+  const [allDay, setAllDay] = useState(isAllDay(initial))
 
   const [form, setForm] = useState({
     u_title: initial?.u_title ?? '',

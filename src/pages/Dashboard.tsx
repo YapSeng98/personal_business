@@ -10,6 +10,7 @@ import { getPartners, getGoals, getActivities, getPurchases } from '../services/
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import Badge from '../components/ui/Badge'
 import { dateKey } from '../lib/calendar'
+import { isAllDay } from '../lib/activity'
 
 const catConfig: Record<string, { icon: React.ElementType; tile: string }> = {
   Meeting: { icon: Users, tile: 'bg-blue-500/15 text-blue-300' },
@@ -138,7 +139,7 @@ export default function Dashboard() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-slate-800 truncate">{a.u_title}</p>
                       <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                        {a.u_all_day === 'true'
+                        {isAllDay(a)
                           ? <span className="flex items-center gap-1"><Clock className="w-3 h-3" />All day</span>
                           : a.u_activity_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{a.u_activity_time}</span>}
                         {a.u_address && <span className="flex items-center gap-1 truncate"><MapPin className="w-3 h-3 shrink-0" />{a.u_address}</span>}

@@ -84,7 +84,7 @@ function seed() {
     AC('a3', 'Recruiting Open Day', 'Recruiting', 'Recruiting', 18, '10:00', '1 Utama Shopping Centre, PJ', '3.1502', '101.6153'),
     AC('a4', 'Leadership Training', 'Training', 'Business Building, Recruiting', 22, '09:00', 'Sunway Pyramid, Subang Jaya', '3.0726', '101.6070'),
     AC('a5', 'Recognition Night', 'Recognition', 'Social', 27, '20:00', 'MITEC, Kuala Lumpur', '3.1710', '101.6640'),
-    AC('a6', 'Charity Fun Run', 'Social', 'Wellness, Community', 15, '', 'Taman Tasik Perdana, KL', '3.1440', '101.6869', 'true'),
+    AC('a6', 'Charity Fun Run', 'Social', 'Wellness, Community', 15, '', 'Taman Tasik Perdana, KL', '3.1440', '101.6869', '1'),
   ]
 
   // ── Invitations / RSVP ──
