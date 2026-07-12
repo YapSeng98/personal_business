@@ -197,15 +197,12 @@ export default function ActivityDetail({
                   <MapPin className="w-4 h-4 text-red-500" />Location
                 </h3>
                 <p className="text-sm text-slate-600 mb-2">{activity.u_address}</p>
-                {activity.u_lat && activity.u_lng ? (
-                  <ActivityMap lat={activity.u_lat} lng={activity.u_lng} label={activity.u_title} />
-                ) : (
-                  <p className="text-xs text-slate-400 bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
-                    {activity.u_geocode_status === 'failed'
-                      ? 'Could not locate this address on the map.'
-                      : 'Map location pending.'}
-                  </p>
-                )}
+                <ActivityMap
+                  address={activity.u_address}
+                  lat={activity.u_lat}
+                  lng={activity.u_lng}
+                  label={activity.u_title}
+                />
               </div>
             )}
 

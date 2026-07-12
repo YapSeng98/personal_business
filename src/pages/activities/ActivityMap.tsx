@@ -1,25 +1,43 @@
-import { useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
-import { fixLeafletIcons } from '../../lib/leafletIconFix'
+import { ExternalLink } from 'lucide-react'
 
-export default function ActivityMap({ lat, lng, label }: { lat: string; lng: string; label: string }) {
-  useEffect(() => { fixLeafletIcons() }, [])
+// Google Maps via the keyless embed (no API key / billing). Prefers the
+// address (Google geocodes it) and falls back to lat/lng.
+export default function ActivityMap({ address, lat, lng, label }: {
+  address?: string
+  lat?: string
+  lng?: string
+  label: string
+}) {
+  const query = address?.trim()
+    ? encodeURIComponent(address)
+    : (lat && lng ? `${lat},${lng}` : '')
+  if (!query) return null
 
-  const position: [number, number] = [parseFloat(lat), parseFloat(lng)]
-  if (Number.isNaN(position[0]) || Number.isNaN(position[1])) return null
+  const embedSrc = `https://maps.google.com/maps?q=${query}&z=15&output=embed`
+  const openUrl = `https://www.google.com/maps/search/?api=1&query=${query}`
 
   return (
-    <div className="h-56 rounded-xl overflow-hidden border border-slate-200">
-      <MapContainer center={position} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <div>
+      <div className="h-56 rounded-xl overflow-hidden border border-slate-200">
+        <iframe
+          title={label}
+          src={embedSrc}
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
         />
-        <Marker position={position}>
-          <Popup>{label}</Popup>
-        </Marker>
-      </MapContainer>
+      </div>
+      <a
+        href={openUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 mt-2 text-xs text-brand-600 hover:underline"
+      >
+        <ExternalLink className="w-3.5 h-3.5" /> Open in Google Maps
+      </a>
     </div>
   )
 }
