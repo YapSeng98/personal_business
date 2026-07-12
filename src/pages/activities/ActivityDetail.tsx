@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   X, ChevronLeft, ChevronRight, MapPin, Tag, Users, UserPlus,
   CheckCircle2, Clock, Edit2, Trash2, Calendar as CalendarIcon,
-  GraduationCap, Rocket, UserCheck, PartyPopper, Award, FileQuestion,
+  GraduationCap, Rocket, UserCheck, PartyPopper, Award, CalendarDays,
   MessageCircle, Dumbbell, Trophy, Heart,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
@@ -27,7 +27,7 @@ const categoryConfig: Record<string, { icon: React.ElementType; gradient: string
   Workout: { icon: Dumbbell, gradient: 'from-cyan-50 to-white', pill: 'bg-cyan-100 text-cyan-700', border: 'border-cyan-200' },
   Sport: { icon: Trophy, gradient: 'from-teal-50 to-white', pill: 'bg-teal-100 text-teal-700', border: 'border-teal-200' },
   Wellness: { icon: Heart, gradient: 'from-pink-50 to-white', pill: 'bg-pink-100 text-pink-700', border: 'border-pink-200' },
-  Other: { icon: FileQuestion, gradient: 'from-slate-50 to-white', pill: 'bg-slate-100 text-slate-700', border: 'border-slate-200' },
+  Other: { icon: CalendarDays, gradient: 'from-indigo-50 to-white', pill: 'bg-indigo-100 text-indigo-700', border: 'border-indigo-200' },
 }
 
 const confirmVariant: Record<string, 'green' | 'red' | 'yellow'> = {

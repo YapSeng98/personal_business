@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   Users, Target, ArrowRight, Calendar, UserPlus, Network,
   MapPin, Clock, ShoppingCart, GraduationCap, Rocket, UserCheck,
-  PartyPopper, Award, FileQuestion, Dumbbell, Trophy, Heart,
+  PartyPopper, Award, CalendarDays, Dumbbell, Trophy, Heart,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { getPartners, getGoals, getActivities, getPurchases } from '../services/servicenow'
@@ -21,7 +21,7 @@ const catConfig: Record<string, { icon: React.ElementType; tile: string }> = {
   Workout: { icon: Dumbbell, tile: 'bg-cyan-500/15 text-cyan-300' },
   Sport: { icon: Trophy, tile: 'bg-teal-500/15 text-teal-300' },
   Wellness: { icon: Heart, tile: 'bg-rose-500/15 text-rose-300' },
-  Other: { icon: FileQuestion, tile: 'bg-slate-500/15 text-slate-300' },
+  Other: { icon: CalendarDays, tile: 'bg-indigo-500/15 text-indigo-300' },
 }
 
 function StatCard({ label, value, icon: Icon, sub, color = 'brand' }: {
