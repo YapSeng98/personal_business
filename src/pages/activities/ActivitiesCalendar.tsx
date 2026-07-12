@@ -89,7 +89,7 @@ export default function ActivitiesCalendar() {
   }, [activities])
 
   const dayActivities = useMemo(
-    () => (activitiesByDate.get(selectedDate) ?? []).sort((a, b) => a.u_activity_time.localeCompare(b.u_activity_time)),
+    () => (activitiesByDate.get(selectedDate) ?? []).sort((a, b) => (a.u_activity_time || '').localeCompare(b.u_activity_time || '')),
     [activitiesByDate, selectedDate]
   )
 

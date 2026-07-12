@@ -71,7 +71,7 @@ export default function Dashboard() {
 
   const upcoming = [...activities]
     .filter(a => a.u_activity_date && a.u_activity_date >= today && a.u_status !== 'cancelled')
-    .sort((a, b) => (a.u_activity_date + a.u_activity_time).localeCompare(b.u_activity_date + b.u_activity_time))
+    .sort((a, b) => ((a.u_activity_date || '') + (a.u_activity_time || '')).localeCompare((b.u_activity_date || '') + (b.u_activity_time || '')))
     .slice(0, 6)
   const activitiesThisMonth = activities.filter(a => a.u_activity_date?.startsWith(monthPrefix)).length
 
