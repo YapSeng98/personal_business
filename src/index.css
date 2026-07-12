@@ -126,6 +126,28 @@
     background: var(--elev);
     color: var(--text);
   }
+  /* Native date/time inputs: iOS renders the value in a centered grey chip
+     that's taller than the <select> fields. Left-align the value everywhere,
+     and on touch devices strip the native chrome so height matches the rest
+     (desktop keeps its calendar-picker icon). */
+  .input-field[type="date"]::-webkit-date-and-time-value,
+  .input-field[type="time"]::-webkit-date-and-time-value {
+    text-align: left;
+    margin: 0;
+  }
+  .input-field::-webkit-calendar-picker-indicator {
+    filter: invert(0.85);
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  .input-field::-webkit-calendar-picker-indicator:hover { opacity: 0.9; }
+  @media (pointer: coarse) {
+    .input-field[type="date"],
+    .input-field[type="time"] {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+  }
   .label {
     @apply block text-sm font-medium mb-1.5;
     color: var(--text-2);
