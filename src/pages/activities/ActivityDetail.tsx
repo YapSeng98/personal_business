@@ -263,13 +263,15 @@ export default function ActivityDetail({
                   <UserPlus className="w-4 h-4 text-emerald-500" />Suggested Partners
                 </h3>
                 <div className="space-y-2">
-                  {suggestions.map(({ partner, matchedTags }) => {
+                  {suggestions.map(({ partner, matchedTags, wildcard }) => {
                     const hasPhone = !!whatsappLink(partner.u_phone)
                     return (
                       <div key={partner.sys_id} className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-emerald-200 bg-emerald-50/50 px-3 py-2.5">
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-slate-800 truncate">{partner.u_name}</p>
-                          {matchedTags.length > 0 && (
+                          {wildcard ? (
+                            <p className="text-xs text-emerald-700 truncate">Open to all activities</p>
+                          ) : matchedTags.length > 0 && (
                             <p className="text-xs text-emerald-700 truncate">Matches: {matchedTags.join(', ')}</p>
                           )}
                         </div>
