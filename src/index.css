@@ -126,10 +126,10 @@
     background: var(--elev);
     color: var(--text);
   }
-  /* Native date/time inputs: iOS renders the value in a centered grey chip
-     that's taller than the <select> fields. Left-align the value everywhere,
-     and on touch devices strip the native chrome so height matches the rest
-     (desktop keeps its calendar-picker icon). */
+  /* Native date/time inputs — keep the OS-native picker (reliably tappable and
+     shows the OS placeholder when empty). Just left-align the value and tint the
+     picker icon for the dark theme; no appearance stripping (that was hiding
+     iOS's own display and left the field looking blank). */
   .input-field[type="date"]::-webkit-date-and-time-value,
   .input-field[type="time"]::-webkit-date-and-time-value {
     text-align: left;
@@ -141,39 +141,6 @@
     cursor: pointer;
   }
   .input-field::-webkit-calendar-picker-indicator:hover { opacity: 0.9; }
-  @media (pointer: coarse) {
-    /* On touch devices we strip the native chrome for consistent height —
-       but that also removes iOS's affordance, so an EMPTY date/time looks
-       blank. Add a persistent clock/calendar icon so the field always reads
-       as a picker, filled or not. */
-    .input-field[type="date"],
-    .input-field[type="time"] {
-      -webkit-appearance: none;
-      appearance: none;
-      background-repeat: no-repeat;
-      background-position: right 0.85rem center;
-      background-size: 1.1rem 1.1rem;
-      padding-right: 2.5rem;
-    }
-    .input-field[type="date"] {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
-    }
-    .input-field[type="time"] {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E");
-    }
-    /* Our background icon replaces the native indicator here; hide it so
-       touch browsers that still render it (Android Chrome) don't double up.
-       The whole field stays tappable to open the picker. */
-    .input-field[type="date"]::-webkit-calendar-picker-indicator,
-    .input-field[type="time"]::-webkit-calendar-picker-indicator {
-      display: none;
-    }
-    /* Keep the empty format hint (--:--) visible on the dark field. */
-    .input-field[type="date"]::-webkit-datetime-edit,
-    .input-field[type="time"]::-webkit-datetime-edit {
-      color: var(--text);
-    }
-  }
   .label {
     @apply block text-sm font-medium mb-1.5;
     color: var(--text-2);

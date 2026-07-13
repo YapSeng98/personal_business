@@ -38,6 +38,7 @@ export default function ActivitiesCalendar() {
   const [modalOpen, setModalOpen] = useState(false)
   const [bulkOpen, setBulkOpen] = useState(false)
   const [editActivity, setEditActivity] = useState<Activity | null>(null)
+  const [duplicateSeed, setDuplicateSeed] = useState<Partial<Activity> | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -73,7 +74,7 @@ export default function ActivitiesCalendar() {
       }
       return createActivity(credentials!, { ...data, u_lat: lat, u_lng: lng, u_geocode_status: geocode_status, u_source: 'manual' })
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['activities'] }); setModalOpen(false) },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['activities'] }); setModalOpen(false); setDuplicateSeed(null) },
   })
 
   const updateMut = useMutation({
@@ -141,8 +142,27 @@ export default function ActivitiesCalendar() {
   }
 
   function openEdit(a: Activity) {
+    setDuplicateSeed(null)
     setEditActivity(a)
     setModalOpen(true)
+  }
+
+  // Duplicate: open a pre-filled COPY in create mode (saving makes a new record).
+  function openDuplicate(a: Activity) {
+    const seed: Partial<Activity> = { ...a }
+    delete seed.sys_id
+    delete seed.sys_created_on
+    delete seed.sys_updated_on
+    seed.u_title = (a.u_title || 'Activity') + ' (copy)'
+    setEditActivity(null)
+    setDuplicateSeed(seed)
+    setModalOpen(true)
+  }
+
+  function closeForm() {
+    setModalOpen(false)
+    setEditActivity(null)
+    setDuplicateSeed(null)
   }
 
   function handleSubmit(data: Partial<Activity>) {
@@ -170,7 +190,7 @@ export default function ActivitiesCalendar() {
         <button className="btn-secondary" onClick={() => setBulkOpen(true)}>
           <Upload className="w-4 h-4" /> Bulk Upload
         </button>
-        <button className="btn-primary" onClick={() => { setEditActivity(null); setModalOpen(true) }}>
+        <button className="btn-primary" onClick={() => { setEditActivity(null); setDuplicateSeed(null); setModalOpen(true) }}>
           <Plus className="w-4 h-4" /> New Activity
         </button>
       </div>
@@ -240,11 +260,11 @@ export default function ActivitiesCalendar() {
         </div>
       )}
 
-      <Modal open={modalOpen} onClose={() => { setModalOpen(false); setEditActivity(null) }} title={editActivity ? 'Edit Activity' : 'New Activity'} size="lg">
+      <Modal open={modalOpen} onClose={closeForm} title={editActivity ? 'Edit Activity' : duplicateSeed ? 'Duplicate Activity' : 'New Activity'} size="lg">
         <ActivityForm
-          initial={editActivity ?? { u_activity_date: selectedDate }}
+          initial={editActivity ?? duplicateSeed ?? { u_activity_date: selectedDate }}
           onSubmit={handleSubmit}
-          onCancel={() => { setModalOpen(false); setEditActivity(null) }}
+          onCancel={closeForm}
           loading={createMut.isPending || updateMut.isPending}
         />
       </Modal>
@@ -264,6 +284,7 @@ export default function ActivitiesCalendar() {
           index={selectedIdx}
           total={dayActivities.length}
           onEdit={() => { openEdit(selectedActivity); setSelectedId(null) }}
+          onDuplicate={() => { openDuplicate(selectedActivity); setSelectedId(null) }}
           onDelete={() => { if (confirm('Delete this activity?')) deleteMut.mutate(selectedActivity.sys_id) }}
         />
       )}

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   X, ChevronLeft, ChevronRight, MapPin, Tag, Users, UserPlus,
-  CheckCircle2, Clock, Edit2, Trash2, Calendar as CalendarIcon,
+  CheckCircle2, Clock, Edit2, Copy, Trash2, Calendar as CalendarIcon,
   GraduationCap, Rocket, UserCheck, PartyPopper, Award, CalendarDays,
   MessageCircle, Dumbbell, Trophy, Heart,
 } from 'lucide-react'
@@ -38,7 +38,7 @@ const confirmVariant: Record<string, 'green' | 'red' | 'yellow'> = {
 }
 
 export default function ActivityDetail({
-  activity, onClose, onPrev, onNext, hasPrev, hasNext, index, total, onEdit, onDelete,
+  activity, onClose, onPrev, onNext, hasPrev, hasNext, index, total, onEdit, onDuplicate, onDelete,
 }: {
   activity: Activity
   onClose: () => void
@@ -49,6 +49,7 @@ export default function ActivityDetail({
   index: number
   total: number
   onEdit: () => void
+  onDuplicate: () => void
   onDelete: () => void
 }) {
   const { credentials } = useAuth()
@@ -145,6 +146,9 @@ export default function ActivityDetail({
             <div className="flex items-center gap-2">
               <button onClick={onEdit} aria-label="Edit" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 ring-1 ring-white/15 transition-all">
                 <Edit2 className="w-3.5 h-3.5 text-white/85" />
+              </button>
+              <button onClick={onDuplicate} aria-label="Duplicate" title="Duplicate" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 ring-1 ring-white/15 transition-all">
+                <Copy className="w-3.5 h-3.5 text-white/85" />
               </button>
               <button onClick={onDelete} aria-label="Delete" className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-red-500/25 ring-1 ring-white/15 transition-all">
                 <Trash2 className="w-3.5 h-3.5 text-red-400" />
