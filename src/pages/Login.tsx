@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Briefcase, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
+import logo from '../assets/biztrack-logo.png'
 import { useAuth } from '../contexts/AuthContext'
 
 const DEFAULT_INSTANCE = 'dev405150.service-now.com'
@@ -74,11 +75,7 @@ export default function Login() {
         <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-brand-300 bg-brand-500/12 border border-brand-500/30 rounded-full px-3.5 py-1 mb-4">
           Personal Business
         </span>
-        <div className="lg-icon mb-3">
-          <Briefcase className="w-8 h-8 text-white" />
-        </div>
-        <h1 className="text-[30px] font-bold tracking-tight text-white leading-none mb-1">BizTrack</h1>
-        <p className="text-xs text-white/35 mb-4">Business Manager · ServiceNow</p>
+        <img src={logo} alt="BizTrack — Your Business, On Track" className="w-[240px] max-w-full mb-4 select-none" draggable={false} />
         <div className="w-10 h-0.5 rounded-full bg-gradient-to-r from-transparent via-white/15 to-transparent mb-5" />
 
         <p className="text-[15px] font-semibold text-white/85 mb-5">
