@@ -90,12 +90,18 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
         </div>
         <div className={allDay ? 'col-span-2' : ''}>
           <label className="label">Date *</label>
-          <input className="input-field" type="date" required value={form.u_activity_date} onChange={e => set('u_activity_date', e.target.value)} />
+          <div className="relative">
+            <input className={`input-field picker-native ${!form.u_activity_date ? 'is-empty' : ''}`} type="date" required value={form.u_activity_date} onChange={e => set('u_activity_date', e.target.value)} />
+            {!form.u_activity_date && <span className="picker-hint pointer-events-none absolute inset-y-0 left-4 text-sm text-slate-400">dd/mm/yyyy</span>}
+          </div>
         </div>
         {!allDay && (
           <div>
             <label className="label">Time</label>
-            <input className="input-field" type="time" value={form.u_activity_time} onChange={e => set('u_activity_time', e.target.value)} />
+            <div className="relative">
+              <input className={`input-field picker-native ${!form.u_activity_time ? 'is-empty' : ''}`} type="time" value={form.u_activity_time} onChange={e => set('u_activity_time', e.target.value)} />
+              {!form.u_activity_time && <span className="picker-hint pointer-events-none absolute inset-y-0 left-4 text-sm text-slate-400">--:--</span>}
+            </div>
           </div>
         )}
         <div className="col-span-2">
