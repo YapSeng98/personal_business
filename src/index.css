@@ -115,6 +115,9 @@
     border: 1px solid var(--glass-line-strong);
     transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
+  /* Uniform single-line height so native date/time boxes match text inputs and
+     selects exactly (they render a few px taller otherwise). Textarea keeps auto. */
+  input.input-field, select.input-field { height: 2.75rem; }
   .input-field::placeholder { color: var(--text-3); }
   .input-field:focus {
     outline: none;
