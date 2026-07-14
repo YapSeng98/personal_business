@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://api.github.com/repos/YapSeng98/personal_business/actions/runs/29267124861/jobs\")",
+      "Bash(python3 -c ' *)"
+    ]
+  }
+}

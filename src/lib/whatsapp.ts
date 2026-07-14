@@ -5,8 +5,10 @@ const DEFAULT_CC = '60' // Malaysia
 
 export function normalizePhone(raw: string | undefined): string | null {
   if (!raw) return null
-  const digits = raw.replace(/\D/g, '')
+  const trimmed = raw.trim()
+  const digits = trimmed.replace(/\D/g, '')
   if (!digits) return null
+  if (trimmed.startsWith('+')) return digits             // explicit country code, e.g. +65 9375 8894
   if (digits.startsWith('60')) return digits            // already international (MY)
   if (digits.startsWith('0')) return DEFAULT_CC + digits.slice(1) // 0123… → 60123…
   // bare local number → assume MY; otherwise trust an existing country code
