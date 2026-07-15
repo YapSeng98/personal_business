@@ -7,6 +7,7 @@ ServiceNow scoped app.
 **Live:** https://yapseng98.github.io/personal_business/
 **Try it now:** click **“Explore the demo”** on the login screen — it runs entirely
 in-memory with sample data, no ServiceNow account needed.
+**New here?** Read the [**User Guide**](USER_GUIDE.md) for a full walkthrough of every feature.
 
 ## Features
 
