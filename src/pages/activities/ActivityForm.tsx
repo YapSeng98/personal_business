@@ -33,6 +33,14 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
     setForm(f => ({ ...f, [field]: value }))
   }
 
+  // Desktop browsers only open a native date/time picker when the small
+  // indicator icon is clicked, not the field body. Force it open on any click
+  // so tapping anywhere in the field pops the picker. showPicker() needs a user
+  // gesture (onClick qualifies) and throws if already open — swallow that.
+  function openPicker(e: React.MouseEvent<HTMLInputElement>) {
+    try { e.currentTarget.showPicker() } catch { /* already open / unsupported */ }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const u_category = category === 'Other' && customCategory.trim() ? customCategory.trim() : category
@@ -91,7 +99,7 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
         <div className={allDay ? 'col-span-2' : ''}>
           <label className="label">Date *</label>
           <div className="relative">
-            <input className={`input-field picker-native ${!form.u_activity_date ? 'is-empty' : ''}`} type="date" required value={form.u_activity_date} onChange={e => set('u_activity_date', e.target.value)} />
+            <input className={`input-field picker-native ${!form.u_activity_date ? 'is-empty' : ''}`} type="date" required value={form.u_activity_date} onChange={e => set('u_activity_date', e.target.value)} onClick={openPicker} />
             {!form.u_activity_date && <span className="picker-hint pointer-events-none absolute inset-y-0 left-4 text-sm text-slate-400">dd/mm/yyyy</span>}
           </div>
         </div>
@@ -99,7 +107,7 @@ export default function ActivityForm({ initial, onSubmit, onCancel, loading }: P
           <div>
             <label className="label">Time</label>
             <div className="relative">
-              <input className={`input-field picker-native ${!form.u_activity_time ? 'is-empty' : ''}`} type="time" value={form.u_activity_time} onChange={e => set('u_activity_time', e.target.value)} />
+              <input className={`input-field picker-native ${!form.u_activity_time ? 'is-empty' : ''}`} type="time" value={form.u_activity_time} onChange={e => set('u_activity_time', e.target.value)} onClick={openPicker} />
               {!form.u_activity_time && <span className="picker-hint pointer-events-none absolute inset-y-0 left-4 text-sm text-slate-400">--:--</span>}
             </div>
           </div>
