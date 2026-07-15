@@ -28,6 +28,22 @@ const categoryDot: Record<string, string> = {
   Other: 'bg-slate-400',
 }
 
+// Tinted chip background per category (maps to the dark-glass remap in index.css).
+const categoryChipBg: Record<string, string> = {
+  Meeting: 'bg-blue-50',
+  Training: 'bg-violet-50',
+  'Product Launch': 'bg-amber-50',
+  Recruiting: 'bg-emerald-50',
+  Social: 'bg-pink-50',
+  Recognition: 'bg-yellow-50',
+  Workout: 'bg-cyan-50',
+  Sport: 'bg-teal-50',
+  Wellness: 'bg-rose-50',
+  Other: 'bg-slate-100',
+}
+
+const MAX_CHIPS = 3
+
 export default function ActivitiesCalendar() {
   const { credentials } = useAuth()
   const qc = useQueryClient()
@@ -208,25 +224,47 @@ export default function ActivitiesCalendar() {
             </div>
             <div className="grid grid-cols-7 gap-1">
               {grid.map(day => {
-                const dayItems = activitiesByDate.get(day.dateKey) ?? []
+                const dayItems = (activitiesByDate.get(day.dateKey) ?? [])
+                  .slice()
+                  .sort((a, b) => (a.u_activity_time || '').localeCompare(b.u_activity_time || ''))
                 const isSelected = day.dateKey === selectedDate
+                // Reserve the last row for a "+N more" summary when the day overflows.
+                const shown = dayItems.length > MAX_CHIPS ? dayItems.slice(0, MAX_CHIPS - 1) : dayItems
+                const moreCount = dayItems.length - shown.length
                 return (
-                  <button
+                  <div
                     key={day.dateKey}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setSelectedDate(day.dateKey)}
-                    className={`aspect-square rounded-xl p-1.5 flex flex-col items-center gap-1 transition-colors border ${
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDate(day.dateKey) } }}
+                    className={`min-h-[96px] rounded-xl p-1.5 flex flex-col gap-1 cursor-pointer transition-colors border text-left ${
                       isSelected ? 'bg-brand-50 border-brand-300' : 'border-transparent hover:bg-slate-50'
-                    } ${!day.inCurrentMonth ? 'opacity-30' : ''}`}
+                    } ${!day.inCurrentMonth ? 'opacity-40' : ''}`}
                   >
-                    <span className={`text-xs font-medium ${day.isToday ? 'w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center' : 'text-slate-700'}`}>
+                    <span className={`text-xs font-medium self-start ${day.isToday ? 'w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center' : 'text-slate-700'}`}>
                       {day.date.getDate()}
                     </span>
-                    <div className="flex gap-0.5 flex-wrap justify-center">
-                      {dayItems.slice(0, 3).map(a => (
-                        <span key={a.sys_id} className={`w-1.5 h-1.5 rounded-full ${categoryDot[a.u_category] ?? 'bg-slate-400'}`} />
+                    <div className="flex flex-col gap-0.5 w-full min-w-0">
+                      {shown.map(a => (
+                        <button
+                          key={a.sys_id}
+                          title={a.u_title}
+                          onClick={e => { e.stopPropagation(); setSelectedDate(day.dateKey); setSelectedId(a.sys_id) }}
+                          className={`w-full text-left rounded-md pl-1 pr-1.5 py-0.5 flex items-center gap-1 min-w-0 hover:brightness-125 transition ${categoryChipBg[a.u_category] ?? 'bg-slate-100'}`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${categoryDot[a.u_category] ?? 'bg-slate-400'}`} />
+                          <span className="text-[11px] leading-tight text-slate-800 truncate">
+                            {!isAllDay(a) && a.u_activity_time && <span className="text-slate-500">{a.u_activity_time} </span>}
+                            {a.u_title}
+                          </span>
+                        </button>
                       ))}
+                      {moreCount > 0 && (
+                        <span className="text-[10px] font-medium text-slate-400 pl-1.5">+{moreCount} more</span>
+                      )}
                     </div>
-                  </button>
+                  </div>
                 )
               })}
             </div>

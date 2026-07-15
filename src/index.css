@@ -213,6 +213,8 @@
 .bg-teal-100 { background-color: rgba(20, 184, 166, 0.22) !important; }
 .bg-yellow-50 { background-color: rgba(234, 179, 8, 0.15) !important; }
 .bg-yellow-100 { background-color: rgba(234, 179, 8, 0.22) !important; }
+.bg-rose-50 { background-color: rgba(244, 63, 94, 0.15) !important; }
+.bg-rose-100 { background-color: rgba(244, 63, 94, 0.22) !important; }
 
 /* -- Text ------------------------------------------------------------ */
 .text-slate-900 { color: var(--text) !important; }
