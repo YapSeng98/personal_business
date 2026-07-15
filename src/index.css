@@ -147,8 +147,11 @@
      in a grey chip and shows no --:-- when empty. Strip the chip so the value
      sits clean + left-aligned, and let the form paint a --:-- placeholder when
      empty (via .picker-hint). Scoped to .picker-native so other date inputs and
-     the laptop's native picker are untouched. */
-  @media (pointer: coarse) {
+     the laptop's native picker are untouched. `hover: none` excludes touchscreen
+     laptops (mouse/trackpad present) that also report pointer:coarse — without it,
+     the calendar icon (the click target Chromium desktop uses to open the picker)
+     gets hidden and the picker stops opening on those devices. */
+  @media (pointer: coarse) and (hover: none) {
     .picker-native {
       -webkit-appearance: none;
       appearance: none;
