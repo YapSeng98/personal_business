@@ -8,11 +8,14 @@ export function normalizePhone(raw: string | undefined): string | null {
   const trimmed = raw.trim()
   const digits = trimmed.replace(/\D/g, '')
   if (!digits) return null
-  if (trimmed.startsWith('+')) return digits             // explicit country code, e.g. +65 9375 8894
-  if (digits.startsWith('60')) return digits            // already international (MY)
-  if (digits.startsWith('0')) return DEFAULT_CC + digits.slice(1) // 0123… → 60123…
-  // bare local number → assume MY; otherwise trust an existing country code
-  return digits.length <= 10 ? DEFAULT_CC + digits : digits
+  if (trimmed.startsWith('+')) return digits              // explicit country code, e.g. +65 9375 8894
+  if (digits.startsWith('0')) return DEFAULT_CC + digits.slice(1) // local MY: 012… → 6012…
+  if (digits.startsWith('60')) return digits             // already MY international
+  // A bare Malaysian mobile without the leading 0 starts with 1 (e.g. 12-345 6789).
+  // Anything else that reaches here already carries its own country code — trust it
+  // as-is so foreign numbers like 65… (Singapore) or 62… don't get 60 prepended.
+  if (/^1\d{8,9}$/.test(digits)) return DEFAULT_CC + digits
+  return digits
 }
 
 export function whatsappLink(phone: string | undefined, message?: string): string | null {
