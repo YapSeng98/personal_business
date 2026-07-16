@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight, Plus, Upload, Calendar as CalendarIcon } from 'lucide-react'
@@ -57,6 +57,16 @@ export default function ActivitiesCalendar() {
   const [duplicateSeed, setDuplicateSeed] = useState<Partial<Activity> | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
+  const agendaRef = useRef<HTMLDivElement>(null)
+
+  // Selecting a day on a phone scrolls the agenda (below the grid) into view,
+  // so tapping a date visibly shows that day's activities.
+  const selectDay = useCallback((key: string) => {
+    setSelectedDate(key)
+    if (window.matchMedia('(max-width: 639px)').matches) {
+      requestAnimationFrame(() => agendaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }
+  }, [])
 
   const { data: activities = [], isLoading } = useQuery({
     queryKey: ['activities'],
@@ -236,16 +246,27 @@ export default function ActivitiesCalendar() {
                     key={day.dateKey}
                     role="button"
                     tabIndex={0}
-                    onClick={() => setSelectedDate(day.dateKey)}
-                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDate(day.dateKey) } }}
-                    className={`min-h-[96px] rounded-xl p-1.5 flex flex-col gap-1 cursor-pointer transition-colors border text-left ${
+                    onClick={() => selectDay(day.dateKey)}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectDay(day.dateKey) } }}
+                    className={`min-h-[52px] sm:min-h-[100px] rounded-lg sm:rounded-xl p-1 sm:p-1.5 flex flex-col gap-1 cursor-pointer transition-colors border text-left ${
                       isSelected ? 'bg-brand-50 border-brand-300' : 'border-transparent hover:bg-slate-50'
                     } ${!day.inCurrentMonth ? 'opacity-40' : ''}`}
                   >
                     <span className={`text-xs font-medium self-start ${day.isToday ? 'w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center' : 'text-slate-700'}`}>
                       {day.date.getDate()}
                     </span>
-                    <div className="flex flex-col gap-0.5 w-full min-w-0">
+
+                    {/* Phone: compact dots (chips don't fit 7 columns) — tap the day for full details in the agenda. */}
+                    {dayItems.length > 0 && (
+                      <div className="flex sm:hidden flex-wrap gap-1 px-0.5">
+                        {dayItems.slice(0, 4).map(a => (
+                          <span key={a.sys_id} className={`w-1.5 h-1.5 rounded-full ${categoryDot[a.u_category] ?? 'bg-slate-400'}`} />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Tablet/desktop: detailed event chips */}
+                    <div className="hidden sm:flex flex-col gap-0.5 w-full min-w-0">
                       {shown.map(a => (
                         <button
                           key={a.sys_id}
@@ -271,7 +292,7 @@ export default function ActivitiesCalendar() {
           </div>
 
           {/* Day agenda */}
-          <div className="card p-4">
+          <div ref={agendaRef} className="card p-4 scroll-mt-4">
             <h3 className="text-sm font-semibold text-slate-800 mb-3">{selectedDate}</h3>
             {dayActivities.length === 0 ? (
               <EmptyState icon={CalendarIcon} title="No activities" description="Nothing scheduled for this day." />
